@@ -11,7 +11,7 @@ export function getIconForDocumentType(documentType: DocumentType) {
   switch (documentType) {
     case DocumentType.Document:
       return DocumentIcon;
-    case DocumentType.Picture:
+    case DocumentType.Image:
       return PhotoIcon;
     case DocumentType.Video:
       return FilmIcon;

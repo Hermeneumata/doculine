@@ -1,8 +1,6 @@
-import { Generated } from "kysely";
-
 export enum DocumentType {
   Document = "document",
-  Picture = "picture",
+  Image = "image",
   Video = "video",
   Audio = "audio",
   Archive = "archive",
