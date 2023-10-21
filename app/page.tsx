@@ -44,9 +44,6 @@ export default async function Home({
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Timeline</Title>
-      <Text>A timeline of documents</Text>
-
       <div className="flex flex-col md:flex-row gap-2 mt-4">
         <Search />
         <DatePicker />
