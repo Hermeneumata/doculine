@@ -1,4 +1,4 @@
-import { Card, Title, Text } from "@tremor/react";
+import { Card } from "@tremor/react";
 import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
 import { queryBuilder } from "@/lib/planetscale";

@@ -27,14 +27,11 @@ export default function DatePicker() {
 
   function handleDateRangeChange(dateRange: DateRangePickerValue) {
     const params = new URLSearchParams(window.location.search);
-    if (dateRange.from) {
+    if (dateRange.from && dateRange.to) {
       params.set("startDate", dateRange.from.getTime().toString());
-    } else {
-      params.delete("startDate");
-    }
-    if (dateRange.to) {
       params.set("endDate", dateRange.to.getTime().toString());
     } else {
+      params.delete("startDate");
       params.delete("endDate");
     }
 
