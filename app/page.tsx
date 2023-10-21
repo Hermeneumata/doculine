@@ -3,16 +3,19 @@ import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
 import { queryBuilder } from "@/lib/planetscale";
 import DatePicker from "@/components/DatePicker";
+import { timestampToMySQLFormat } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams: { q: string; startDate: string; endDate: string };
 }) {
   const search = searchParams.q ?? "";
-  const documents = await queryBuilder
+  const startDate = searchParams.startDate ?? "";
+  const endDate = searchParams.endDate ?? "";
+  let query = queryBuilder
     .selectFrom("documents")
     .select([
       "id",
@@ -22,8 +25,17 @@ export default async function Home({
       "download_link",
       "document_type",
     ])
-    .where("title", "like", `%${search}%`)
-    .execute();
+    .where("title", "like", `%${search}%`);
+
+  if (startDate) {
+    query = query.where("date", ">=", timestampToMySQLFormat(startDate));
+  }
+
+  if (endDate) {
+    query = query.where("date", "<=", timestampToMySQLFormat(endDate));
+  }
+
+  const documents = await query.orderBy("date", "desc").execute();
   const mappedDocuments = documents.map((document) => ({
     ...document,
     downloadLink: document.download_link,

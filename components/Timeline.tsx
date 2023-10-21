@@ -1,5 +1,4 @@
-import { DocumentDBModel } from "@/lib/planetscale";
-import { Document, DocumentType } from "@/lib/types";
+import { Document } from "@/lib/types";
 import { getIconForDocumentType } from "@/lib/utils";
 
 type TimelineRecordProps = Document & {
@@ -60,12 +59,21 @@ export default async function Timeline({
 }: {
   documents: Document[];
 }) {
+  const latestDocumentIndex = documents.reduce(
+    (prevIndex, currentDocument, currentIndex) => {
+      return new Date(documents[prevIndex].date) >
+        new Date(currentDocument.date)
+        ? prevIndex
+        : currentIndex;
+    },
+    0
+  );
   return (
     <ol className="relative border-l border-gray-200">
       {documents.map((document, index) => (
         <TimelineRecord
           key={`${document.id}`}
-          latest={index === 0}
+          latest={index === latestDocumentIndex}
           {...document}
         />
       ))}
