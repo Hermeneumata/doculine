@@ -1,15 +1,24 @@
 "use client";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { TextInput } from "@tremor/react";
-import { useTransition } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import Spinner from "@/components/Spinner";
 
 export default function Search({ disabled }: { disabled?: boolean }) {
   const { replace } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const term = params.get("q");
+    if (term) {
+      setSearchTerm(term);
+    }
+  }, []);
 
   function handleSearch(term: string) {
     const params = new URLSearchParams(window.location.search);
@@ -34,7 +43,11 @@ export default function Search({ disabled }: { disabled?: boolean }) {
         disabled={disabled}
         placeholder="Search by name..."
         spellCheck={false}
-        onChange={(e) => handleSearch(e.target.value)}
+        value={searchTerm}
+        onChange={(e) => {
+          setSearchTerm(e.target.value);
+          handleSearch(e.target.value);
+        }}
       />
 
       {isPending && (
