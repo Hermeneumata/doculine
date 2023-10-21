@@ -59,6 +59,13 @@ export default async function Timeline({
 }: {
   documents: Document[];
 }) {
+  if (!documents.length) {
+    return (
+      <div className="flex items-center justify-center p-10">
+        <p className="text-gray-500">No documents found.</p>
+      </div>
+    );
+  }
   const latestDocumentIndex = documents.reduce(
     (prevIndex, currentDocument, currentIndex) => {
       return new Date(documents[prevIndex].date) >
