@@ -4,16 +4,23 @@ import { Fragment, useState, useEffect, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import NewRecordForm from "@/components/NewRecordForm";
+import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
+import createDocument from "@/lib/createDocument";
+import { DocumentType } from "@/lib/types";
+import { dateToMySQLFormat } from "@/lib/utils";
 
-export default function SlideOver({
-  children,
-  title,
-}: {
-  children: React.ReactNode;
-  title: string;
-}) {
+export default function SlideOver({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [document, setDocument] = useState({
+    title: "",
+    date: undefined as Date | undefined,
+    description: "",
+    downloadLink: "#",
+    documentType: undefined as DocumentType | undefined,
+  });
 
   const router = useRouter();
   const pathname = usePathname();
@@ -32,6 +39,11 @@ export default function SlideOver({
       scrollRef.current.scrollTop = 0;
     }
   }, [open]);
+
+  const handleSave = async (newDocument: NewDocumentDBModel) => {
+    createDocument(newDocument);
+    handleClose();
+  };
 
   const handleClose = () => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -70,7 +82,25 @@ export default function SlideOver({
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+                  <form
+                    className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                    onSubmit={() => {
+                      if (
+                        document.title &&
+                        document.date &&
+                        document.description &&
+                        document.documentType
+                      ) {
+                        handleSave({
+                          title: document.title,
+                          date: dateToMySQLFormat(document.date),
+                          description: document.description,
+                          download_link: document.downloadLink,
+                          document_type: document.documentType,
+                        });
+                      }
+                    }}
+                  >
                     <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
@@ -94,7 +124,10 @@ export default function SlideOver({
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        {children}
+                        <NewRecordForm
+                          setDocument={setDocument}
+                          document={document}
+                        />
                       </div>
                     </div>
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
@@ -112,7 +145,7 @@ export default function SlideOver({
                         Save
                       </button>
                     </div>
-                  </div>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

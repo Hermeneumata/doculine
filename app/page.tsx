@@ -1,13 +1,12 @@
 import { Card, Title } from "@tremor/react";
 import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
-import { queryBuilder } from "@/lib/planetscale";
+import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import DatePicker from "@/components/DatePicker";
 import { timestampToMySQLFormat } from "@/lib/utils";
 import Link from "next/link";
 import SlideOver from "@/components/SlideOver";
-import NewRecordForm from "@/components/NewRecordForm";
 
 export const dynamic = "force-dynamic";
 
@@ -48,11 +47,10 @@ export default async function Home({
 
   return (
     <>
-      <SlideOver title="Add new record">
-        <NewRecordForm />
-      </SlideOver>
-      <Title>Document timeline</Title>
-      <div className="flex justify-end">
+      <SlideOver title="Add new record" />
+
+      <div className="flex justify-between items-center">
+        <Title>Document timeline</Title>
         <Link
           href={`/?${new URLSearchParams({
             ...searchParams,

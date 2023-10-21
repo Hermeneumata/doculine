@@ -14,7 +14,7 @@ export type User = {
 };
 
 export interface Document {
-  id: number;
+  id?: number;
   title: string;
   date: string;
   description: string;

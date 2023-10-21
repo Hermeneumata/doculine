@@ -3,13 +3,15 @@ import { Generated, Kysely } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
 import { DocumentType } from "@/lib/types";
 
-export interface DocumentDBModel {
-  id: Generated<number>;
+export interface NewDocumentDBModel {
   title: string;
   date: string;
   description: string;
   download_link: string;
   document_type: DocumentType;
+}
+export interface DocumentDBModel extends NewDocumentDBModel {
+  id?: Generated<number>;
 }
 
 interface Database {
