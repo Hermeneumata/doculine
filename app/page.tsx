@@ -2,6 +2,7 @@ import { Card, Title, Text } from "@tremor/react";
 import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
 import { queryBuilder } from "@/lib/planetscale";
+import DatePicker from "@/components/DatePicker";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,10 @@ export default async function Home({
       <Title>Timeline</Title>
       <Text>A timeline of documents</Text>
 
-      <Search />
+      <div className="flex flex-col md:flex-row gap-2 mt-4">
+        <Search />
+        <DatePicker />
+      </div>
       <Card className="mt-6">
         <Timeline documents={mappedDocuments} />
       </Card>
