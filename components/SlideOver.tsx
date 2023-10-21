@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewRecordForm from "@/components/NewRecordForm";
-import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
+import { NewDocumentDBModel } from "@/lib/planetscale";
 import createDocument from "@/lib/createDocument";
 import { DocumentType } from "@/lib/types";
 import { dateToMySQLFormat } from "@/lib/utils";
@@ -14,13 +14,15 @@ export default function SlideOver({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [document, setDocument] = useState({
+  const nullDocument = {
     title: "",
     date: undefined as Date | undefined,
     description: "",
     downloadLink: "#",
-    documentType: undefined as DocumentType | undefined,
-  });
+    documentType: "" as DocumentType | "",
+  };
+
+  const [document, setDocument] = useState(nullDocument);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -42,7 +44,14 @@ export default function SlideOver({ title }: { title: string }) {
 
   const handleSave = async (newDocument: NewDocumentDBModel) => {
     createDocument(newDocument);
-    handleClose();
+    setDocument(nullDocument);
+    router.refresh();
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    current.delete("slideOver");
+    const search = current.toString();
+    const query = search ? `?${search}` : "";
+    setOpen(false);
+    router.push(`${pathname}${query}`, { scroll: false });
   };
 
   const handleClose = () => {
@@ -84,7 +93,8 @@ export default function SlideOver({ title }: { title: string }) {
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                   <form
                     className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
-                    onSubmit={() => {
+                    onSubmit={(e) => {
+                      e.preventDefault();
                       if (
                         document.title &&
                         document.date &&

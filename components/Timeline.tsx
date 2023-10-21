@@ -1,11 +1,14 @@
 import { Document } from "@/lib/types";
 import { getIconForDocumentType } from "@/lib/utils";
+import RemoveButton from "./RemoveButton";
+import { Transition } from "@headlessui/react";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
 };
 
 function TimelineRecord({
+  id,
   title,
   date,
   description,
@@ -14,8 +17,8 @@ function TimelineRecord({
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
   return (
-    <li className="mb-10 ml-6">
-      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
+    <li className="mb-10 ml-6 relative group">
+      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-9 ring-8 ring-white">
         <Icon className="w-3 h-3 text-blue-800" />
       </span>
       <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900">
@@ -50,6 +53,9 @@ function TimelineRecord({
         </svg>{" "}
         Download {documentType}
       </a>
+      <div className="absolute top-0 right-0 p-2 invisible group-hover:visible">
+        <RemoveButton id={id} />
+      </div>
     </li>
   );
 }
