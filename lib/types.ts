@@ -1,8 +1,6 @@
-import { Generated } from "kysely";
-
 export enum DocumentType {
   Document = "document",
-  Picture = "picture",
+  Image = "image",
   Video = "video",
   Audio = "audio",
   Archive = "archive",
@@ -16,7 +14,7 @@ export type User = {
 };
 
 export interface Document {
-  id: number;
+  id?: number;
   title: string;
   date: string;
   description: string;

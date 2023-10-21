@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Timeline of documents",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -23,7 +23,7 @@ export default function RootLayout({
         <Suspense>
           <Nav />
         </Suspense>
-        {children}
+        <main className="p-4 md:p-10 mx-auto max-w-7xl">{children}</main>
       </body>
     </html>
   );

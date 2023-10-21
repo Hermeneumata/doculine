@@ -1,9 +1,12 @@
-import { Card } from "@tremor/react";
+import { Card, Title } from "@tremor/react";
 import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
-import { queryBuilder } from "@/lib/planetscale";
+import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import DatePicker from "@/components/DatePicker";
 import { timestampToMySQLFormat } from "@/lib/utils";
+import Link from "next/link";
+import SlideOver from "@/components/SlideOver";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +46,22 @@ export default async function Home({
   }));
 
   return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl">
+    <>
+      <SlideOver title="Add new record" />
+
+      <div className="flex justify-between items-center">
+        <Title>Document timeline</Title>
+        <Link
+          href={`/?${new URLSearchParams({
+            ...searchParams,
+            slideOver: "true",
+          }).toString()}`}
+          className="rounded-md items-center flex bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          <PlusIcon className="block h-6 w-6" aria-hidden="true" />
+          Add New
+        </Link>
+      </div>
       <div className="flex flex-col md:flex-row gap-2 mt-4">
         <Search />
         <DatePicker />
@@ -51,6 +69,6 @@ export default async function Home({
       <Card className="mt-6">
         <Timeline documents={mappedDocuments} />
       </Card>
-    </main>
+    </>
   );
 }

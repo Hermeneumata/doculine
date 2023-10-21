@@ -11,7 +11,7 @@ export function getIconForDocumentType(documentType: DocumentType) {
   switch (documentType) {
     case DocumentType.Document:
       return DocumentIcon;
-    case DocumentType.Picture:
+    case DocumentType.Image:
       return PhotoIcon;
     case DocumentType.Video:
       return FilmIcon;
@@ -24,8 +24,10 @@ export function getIconForDocumentType(documentType: DocumentType) {
   }
 }
 
-export function timestampToMySQLFormat(timestamp: number | string): string {
-  const date = new Date(Number(timestamp));
+export function dateToMySQLFormat(date?: Date): string {
+  if (!date) {
+    return "";
+  }
   const year = date.getFullYear();
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
   const day = ("0" + date.getDate()).slice(-2);
@@ -33,4 +35,9 @@ export function timestampToMySQLFormat(timestamp: number | string): string {
   const minutes = ("0" + date.getMinutes()).slice(-2);
   const seconds = ("0" + date.getSeconds()).slice(-2);
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function timestampToMySQLFormat(timestamp: number | string): string {
+  const date = new Date(Number(timestamp));
+  return dateToMySQLFormat(date);
 }
