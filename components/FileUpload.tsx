@@ -25,7 +25,7 @@ export default function FileUplaod() {
             <p className="pl-1">or drag and drop</p>
           </div>
           <p className="text-xs leading-5 text-gray-600">
-            PNG, JPG, GIF up to 10MB
+            PNG, JPG, GIF up to 4.5MB
           </p>
         </div>
       </div>

@@ -9,17 +9,22 @@ import { NewDocumentDBModel } from "@/lib/planetscale";
 import createDocument from "@/lib/createDocument";
 import { DocumentType } from "@/lib/types";
 import { dateToMySQLFormat } from "@/lib/utils";
+import type { PutBlobResult } from "@vercel/blob";
+import { Button } from "@tremor/react";
 
 export default function SlideOver({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState<any>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const nullDocument = {
     title: "",
     date: undefined as Date | undefined,
     description: "",
-    downloadLink: "#",
-    documentType: "" as DocumentType | "",
+    downloadLink: "",
+    documentType: "" as DocumentType | undefined,
   };
 
   const [document, setDocument] = useState(nullDocument);
@@ -43,7 +48,22 @@ export default function SlideOver({ title }: { title: string }) {
   }, [open]);
 
   const handleSave = async (newDocument: NewDocumentDBModel) => {
-    createDocument(newDocument);
+    setLoading(true);
+    let url;
+    if (inputFileRef.current?.files) {
+      const file = inputFileRef.current.files[0];
+      const response = await fetch(`/api/upload?filename=${file.name}`, {
+        method: "POST",
+        body: file,
+      });
+
+      const newBlob = (await response.json()) as PutBlobResult;
+      url = newBlob.url;
+    }
+    await createDocument({ ...newDocument, download_link: url });
+
+    setLoading(false);
+
     setDocument(nullDocument);
     router.refresh();
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -105,7 +125,6 @@ export default function SlideOver({ title }: { title: string }) {
                           title: document.title,
                           date: dateToMySQLFormat(document.date),
                           description: document.description,
-                          download_link: document.downloadLink,
                           document_type: document.documentType,
                         });
                       }
@@ -135,12 +154,14 @@ export default function SlideOver({ title }: { title: string }) {
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         <NewRecordForm
+                          inputFileRef={inputFileRef}
                           setDocument={setDocument}
                           document={document}
+                          setFileUploaded={setFileUploaded}
                         />
                       </div>
                     </div>
-                    <div className="flex flex-shrink-0 justify-end px-4 py-4">
+                    <div className="flex flex-shrink-0 gap-2 justify-end px-4 py-4">
                       <button
                         type="button"
                         className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
@@ -148,12 +169,20 @@ export default function SlideOver({ title }: { title: string }) {
                       >
                         Cancel
                       </button>
-                      <button
+
+                      <Button
                         type="submit"
-                        className="ml-4 inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                        loading={loading}
+                        disabled={
+                          !document.title ||
+                          !document.date ||
+                          !document.description ||
+                          !document.documentType ||
+                          !fileUploaded
+                        }
                       >
                         Save
-                      </button>
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>

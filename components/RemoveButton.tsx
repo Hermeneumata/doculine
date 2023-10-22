@@ -3,13 +3,23 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import removeDocument from "@/lib/removeDocument";
 
-export default function RemoveButton({ id }: { id?: number }) {
+export default function RemoveButton({
+  id,
+  urlToDelete,
+}: {
+  id?: number;
+  urlToDelete?: string;
+}) {
   const router = useRouter();
 
   const handleClick = async () => {
-    if (!id) {
+    if (!id || !urlToDelete) {
       return;
     }
+
+    await fetch(`/api/delete?url=${urlToDelete}`, {
+      method: "DELETE",
+    });
     await removeDocument(id);
     router.refresh();
   };
