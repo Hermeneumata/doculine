@@ -130,7 +130,8 @@ export default function SlideOver({ title }: { title: string }) {
                       }
                     }}
                   >
-                    <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
+                    <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll overflow-x-hidden py-6">
+                      {/* fix overflow-x-hidden */}
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
