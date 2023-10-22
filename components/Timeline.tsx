@@ -17,18 +17,16 @@ function TimelineRecord({
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
   return (
-    <li className="mb-10 ml-6 relative group">
-      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-9 ring-8 ring-white">
+    <li className="mb-10 ml-6 group">
+      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
         <Icon className="w-3 h-3 text-blue-800" />
       </span>
-      <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900">
-        {title}
-        {latest && (
-          <span className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">
-            Latest
-          </span>
-        )}
-      </h3>
+      <div className="flex justify-between w-full relative">
+        <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
+        <div className="pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-0">
+          <RemoveButton id={id} />
+        </div>
+      </div>
       <time className="block mb-2 text-sm font-normal leading-none text-gray-400">
         {new Date(date).toLocaleString("en-US", {
           month: "long",
@@ -53,9 +51,6 @@ function TimelineRecord({
         </svg>{" "}
         Download {documentType}
       </a>
-      <div className="absolute top-0 right-0 p-2 invisible group-hover:visible">
-        <RemoveButton id={id} />
-      </div>
     </li>
   );
 }
