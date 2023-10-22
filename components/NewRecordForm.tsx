@@ -10,9 +10,13 @@ import TextArea from "@/components/TextArea";
 export default function NewRecordForm({
   setDocument,
   document,
+  inputFileRef,
+  setFileUploaded,
 }: {
   setDocument: any;
   document: any;
+  inputFileRef: any;
+  setFileUploaded: any;
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -108,7 +112,13 @@ export default function NewRecordForm({
       <div className="col-span-full">
         <Label htmlFor="description">Attachment</Label>
         <div className="mt-2">
-          <FileUpload />
+          <input
+            name="file"
+            ref={inputFileRef}
+            type="file"
+            onChange={() => setFileUploaded(true)}
+          />
+          {/* <FileUpload /> */}
         </div>
       </div>
     </div>

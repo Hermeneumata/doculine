@@ -1,7 +1,6 @@
 import { Document } from "@/lib/types";
 import { getIconForDocumentType } from "@/lib/utils";
 import RemoveButton from "./RemoveButton";
-import { Transition } from "@headlessui/react";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
@@ -12,6 +11,7 @@ function TimelineRecord({
   title,
   date,
   description,
+  downloadLink,
   documentType,
   latest,
 }: TimelineRecordProps) {
@@ -24,7 +24,7 @@ function TimelineRecord({
       <div className="flex justify-between w-full relative">
         <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
         <div className="pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-0">
-          <RemoveButton id={id} />
+          <RemoveButton id={id} urlToDelete={downloadLink} />
         </div>
       </div>
       <time className="block mb-2 text-sm font-normal leading-none text-gray-400">
@@ -36,7 +36,8 @@ function TimelineRecord({
       </time>
       <p className="mb-4 text-base font-normal text-gray-500">{description}</p>
       <a
-        href="#"
+        href={downloadLink}
+        download
         className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700"
       >
         <svg

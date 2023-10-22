@@ -7,7 +7,7 @@ export interface NewDocumentDBModel {
   title: string;
   date: string;
   description: string;
-  download_link: string;
+  download_link?: string;
   document_type: DocumentType;
 }
 export interface DocumentDBModel extends NewDocumentDBModel {

@@ -7,5 +7,4 @@ export default async function createDocument(newDocument: NewDocumentDBModel) {
     .insertInto("documents")
     .values(newDocument)
     .execute();
-  console.info("response", response);
 }
