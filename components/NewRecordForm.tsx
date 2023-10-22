@@ -118,7 +118,6 @@ export default function NewRecordForm({
             type="file"
             onChange={() => setFileUploaded(true)}
           />
-          {/* <FileUpload /> */}
         </div>
       </div>
     </div>

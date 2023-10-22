@@ -41,7 +41,7 @@ export default async function Home({
   const documents = await query.orderBy("date", "desc").execute();
   const mappedDocuments = documents.map((document) => ({
     ...document,
-    downloadLink: document.download_link,
+    downloadLink: document.download_link ?? "#",
     documentType: document.document_type,
   }));
 
