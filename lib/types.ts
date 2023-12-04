@@ -14,10 +14,10 @@ export type User = {
 };
 
 export interface Document {
-  id?: number;
+  id: string;
   title: string;
-  date: string;
+  date: Date;
   description: string;
   downloadLink: string;
-  documentType: DocumentType;
+  documentType: string;
 }

@@ -5,39 +5,20 @@ import {
   MusicalNoteIcon,
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
-import { DocumentType } from "@/lib/types";
 
-export function getIconForDocumentType(documentType: DocumentType) {
+export function getIconForDocumentType(documentType: string) {
   switch (documentType) {
-    case DocumentType.Document:
+    case "document":
       return DocumentIcon;
-    case DocumentType.Image:
+    case "image":
       return PhotoIcon;
-    case DocumentType.Video:
+    case "video":
       return FilmIcon;
-    case DocumentType.Audio:
+    case "audio":
       return MusicalNoteIcon;
-    case DocumentType.Archive:
+    case "archive":
       return ArchiveBoxIcon;
     default:
       return DocumentIcon;
   }
-}
-
-export function dateToMySQLFormat(date?: Date): string {
-  if (!date) {
-    return "";
-  }
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-  const hours = ("0" + date.getHours()).slice(-2);
-  const minutes = ("0" + date.getMinutes()).slice(-2);
-  const seconds = ("0" + date.getSeconds()).slice(-2);
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
-export function timestampToMySQLFormat(timestamp: number | string): string {
-  const date = new Date(Number(timestamp));
-  return dateToMySQLFormat(date);
 }

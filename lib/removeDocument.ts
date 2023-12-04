@@ -1,7 +1,6 @@
 "use server";
+import prisma from "@/lib/db";
 
-import { queryBuilder } from "@/lib/planetscale";
-
-export default async function removeDocument(id: number): Promise<void> {
-  await queryBuilder.deleteFrom("documents").where("id", "=", id).execute();
+export default async function removeDocument(id: string): Promise<void> {
+  await prisma.document.delete({ where: { id } });
 }

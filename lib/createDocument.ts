@@ -1,10 +1,15 @@
 "use server";
+import prisma from "@/lib/db";
 
-import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
+export interface NewDocumentDBModel {
+  title: string;
+  date: string;
+  description: string;
+  downloadLink: string;
+  documentType: string;
+}
 
 export default async function createDocument(newDocument: NewDocumentDBModel) {
-  const response = await queryBuilder
-    .insertInto("documents")
-    .values(newDocument)
-    .execute();
+  const document = await prisma.document.create({ data: newDocument });
+  return document;
 }
