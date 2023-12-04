@@ -6,7 +6,6 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewRecordForm from "@/components/NewRecordForm";
 import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
-import { dateToMySQLFormat } from "@/lib/utils";
 import { Button } from "@tremor/react";
 
 export default function SlideOver({ title }: { title: string }) {
