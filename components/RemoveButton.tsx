@@ -7,7 +7,7 @@ export default function RemoveButton({
   id,
   urlToDelete,
 }: {
-  id?: number;
+  id?: string;
   urlToDelete?: string;
 }) {
   const router = useRouter();

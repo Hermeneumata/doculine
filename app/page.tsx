@@ -1,11 +1,11 @@
 import { Card, Title } from "@tremor/react";
 import Timeline from "@/components/Timeline";
 import Search from "@/components/Search";
-import { NewDocumentDBModel, queryBuilder } from "@/lib/planetscale";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import DatePicker from "@/components/DatePicker";
 import { timestampToMySQLFormat } from "@/lib/utils";
 import Link from "next/link";
+import prisma from "@/lib/db";
 import SlideOver from "@/components/SlideOver";
 
 export const dynamic = "force-dynamic";
@@ -18,39 +18,32 @@ export default async function Home({
   const search = searchParams.q ?? "";
   const startDate = searchParams.startDate ?? "";
   const endDate = searchParams.endDate ?? "";
-  let query = queryBuilder
-    .selectFrom("documents")
-    .select([
-      "id",
-      "title",
-      "date",
-      "description",
-      "download_link",
-      "document_type",
-    ])
-    .where("title", "like", `%${search}%`);
-
-  if (startDate) {
-    query = query.where("date", ">=", timestampToMySQLFormat(startDate));
-  }
-
-  if (endDate) {
-    query = query.where("date", "<=", timestampToMySQLFormat(endDate));
-  }
-
-  const documents = await query.orderBy("date", "desc").execute();
-  const mappedDocuments = documents.map((document) => ({
-    ...document,
-    downloadLink: document.download_link ?? "#",
-    documentType: document.document_type,
-  }));
+  const documents = await prisma.document.findMany({
+    where: {
+      title: {
+        contains: search,
+      },
+      // TODO: Filter by date range
+    },
+    select: {
+      id: true,
+      title: true,
+      date: true,
+      description: true,
+      downloadLink: true,
+      documentType: true,
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
 
   return (
     <>
       <SlideOver title="Add new record" />
 
       <div className="flex justify-between items-center">
-        <Title>Document timeline 333</Title>
+        <Title>Document timeline</Title>
         <Link
           href={`/?${new URLSearchParams({
             ...searchParams,
@@ -67,7 +60,7 @@ export default async function Home({
         <DatePicker />
       </div>
       <Card className="mt-6">
-        <Timeline documents={mappedDocuments} />
+        <Timeline documents={documents} />
       </Card>
     </>
   );
