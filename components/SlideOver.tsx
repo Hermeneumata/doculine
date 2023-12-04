@@ -5,11 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewRecordForm from "@/components/NewRecordForm";
-import { NewDocumentDBModel } from "@/lib/planetscale";
-import createDocument from "@/lib/createDocument";
-import { DocumentType } from "@/lib/types";
-import { dateToMySQLFormat } from "@/lib/utils";
-import type { PutBlobResult } from "@vercel/blob";
+import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
 import { Button } from "@tremor/react";
 
 export default function SlideOver({ title }: { title: string }) {
@@ -23,8 +19,8 @@ export default function SlideOver({ title }: { title: string }) {
     title: "",
     date: undefined as Date | undefined,
     description: "",
-    downloadLink: "",
-    documentType: "" as DocumentType | undefined,
+    downloadLink: "test",
+    documentType: "",
   };
 
   const [document, setDocument] = useState(nullDocument);
@@ -49,18 +45,7 @@ export default function SlideOver({ title }: { title: string }) {
 
   const handleSave = async (newDocument: NewDocumentDBModel) => {
     setLoading(true);
-    let url;
-    if (inputFileRef.current?.files) {
-      const file = inputFileRef.current.files[0];
-      const response = await fetch(`/api/upload?filename=${file.name}`, {
-        method: "POST",
-        body: file,
-      });
-
-      const newBlob = (await response.json()) as PutBlobResult;
-      url = newBlob.url;
-    }
-    await createDocument({ ...newDocument, download_link: url });
+    await createDocument(newDocument);
 
     setLoading(false);
 
@@ -123,9 +108,10 @@ export default function SlideOver({ title }: { title: string }) {
                       ) {
                         handleSave({
                           title: document.title,
-                          date: dateToMySQLFormat(document.date),
+                          date: document.date.toISOString(),
                           description: document.description,
-                          document_type: document.documentType,
+                          documentType: document.documentType,
+                          downloadLink: document.downloadLink,
                         });
                       }
                     }}
