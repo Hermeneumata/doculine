@@ -30,6 +30,12 @@ jobs:
           npm run build --if-present
           # npm run test --if-present
 
+      - name: Run Prisma Migrate Deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
+        run: npx prisma migrate deploy
+
       - name: Zip artifact to upload
         run: zip -r ${{ env.ZIP_PACKAGE_NAME }} ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
@@ -37,9 +43,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.AZURE_WEBAPP_NAME }}
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.ZIP_PACKAGE_NAME }}
+          path: ${{ env.ZIP_PACKAGE_NAME }}
           retention-days: 1
-
+          
   deploy:
     permissions:
       contents: none
@@ -62,11 +68,3 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.ZIP_PACKAGE_NAME }}
-
-      - name: Run Prisma Migrate Deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
-        run: |
-          unzip ${{ env.ZIP_PACKAGE_NAME }}
-          npx prisma migrate deploy
