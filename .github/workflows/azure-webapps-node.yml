@@ -43,9 +43,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.AZURE_WEBAPP_NAME }}
-          path: ${{ env.ZIP_PACKAGE_NAME }}
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.ZIP_PACKAGE_NAME }}
           retention-days: 1
-          
+
   deploy:
     permissions:
       contents: none
