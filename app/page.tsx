@@ -54,7 +54,7 @@ export default async function Home({
         </Link>
       </div>
 
-      <Projects timelines={timelines} />
+      <Projects timelines={timelines} user={user} />
     </>
   );
 }

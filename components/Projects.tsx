@@ -1,7 +1,4 @@
 import {
-  Card,
-  Title,
-  Text,
   Table,
   TableBody,
   TableCell,
@@ -9,14 +6,21 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
-import RemoveButton from "@/components/RemoveButton";
+import RemoveTimelineButton from "@/components/RemoveTimelineButton";
 import { FolderOpenIcon, PencilIcon } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
 import { Timeline } from "@/lib/types";
+import { User } from "@prisma/client";
 
-export default function Projects({ timelines }: { timelines: Timeline[] }) {
+export default function Projects({
+  timelines,
+  user,
+}: {
+  timelines: Timeline[];
+  user: User;
+}) {
   if (!timelines.length) {
     return (
       <div className="flex items-center justify-center p-10">
@@ -64,14 +68,14 @@ export default function Projects({ timelines }: { timelines: Timeline[] }) {
                   <span className="sr-only">View</span>
                   <FolderOpenIcon className="w-5 h-5 text-gray-500 hover:text-blue-500" />
                 </Link>
-                <Link
+                {/* <Link
                   href={`/${id}`}
                   className="text-blue-500 hover:text-blue-400 hover:underline"
                 >
                   <span className="sr-only">Edit</span>
                   <PencilIcon className="w-5 h-5 text-gray-500 hover:text-yellow-500" />
-                </Link>
-                <RemoveButton />
+                </Link> */}
+                {owner.id === user.id && <RemoveTimelineButton id={id} />}
               </div>
             </TableCell>
           </TableRow>
