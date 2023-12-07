@@ -1,9 +1,10 @@
 import { Document } from "@/lib/types";
 import { getIconForDocumentType } from "@/lib/utils";
-import RemoveButton from "./RemoveButton";
+import DocumentRemoveButton from "@/components/DocumentRemoveButton";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
+  deleteEnabled: boolean;
 };
 
 function TimelineRecord({
@@ -14,6 +15,7 @@ function TimelineRecord({
   downloadLink,
   documentType,
   latest,
+  deleteEnabled,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
   return (
@@ -23,9 +25,11 @@ function TimelineRecord({
       </span>
       <div className="flex justify-between w-full relative">
         <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
-        <div className="pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-0">
-          <RemoveButton id={id} urlToDelete={downloadLink} />
-        </div>
+        {deleteEnabled && (
+          <div className="pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-30">
+            <DocumentRemoveButton id={id} />
+          </div>
+        )}
       </div>
       <time className="block mb-2 text-sm font-normal leading-none text-gray-400">
         {new Date(date).toLocaleString("en-US", {
@@ -58,8 +62,12 @@ function TimelineRecord({
 
 export default async function Timeline({
   documents,
+  projectOwnerId,
+  userId,
 }: {
   documents: Document[];
+  projectOwnerId: string;
+  userId: string;
 }) {
   if (!documents.length) {
     return (
@@ -81,6 +89,9 @@ export default async function Timeline({
     <ol className="relative border-l border-gray-200">
       {documents.map((document, index) => (
         <TimelineRecord
+          deleteEnabled={
+            projectOwnerId === userId || projectOwnerId === document.createdById
+          }
           key={`${document.id}`}
           latest={index === latestDocumentIndex}
           {...document}

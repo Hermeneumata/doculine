@@ -22,6 +22,7 @@ export default async function Page({
   if (!session || !session?.user || !session?.user?.email) {
     return notFound();
   }
+
   const user = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,
@@ -99,7 +100,11 @@ export default async function Page({
         <DatePicker />
       </div>
       <Card className="mt-6">
-        <Timeline documents={project.documents} />
+        <Timeline
+          userId={user.id}
+          documents={project.documents}
+          projectOwnerId={project.ownerId}
+        />
       </Card>
     </>
   );

@@ -32,24 +32,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "azure-ad") {
-        let dbUser = await prisma.user.findUnique({
-          where: { azureId: user.id },
-        });
-        if (!dbUser) {
-          dbUser = await prisma.user.create({
-            data: {
-              azureId: user.id,
-              email: user.email as string,
-              name: user.name,
-            },
-          });
-        }
-
-        return dbUser !== null;
-      }
-      return true;
-    },
+    // async signIn({ user, account }) {
+    //   if (account?.provider === "azure-ad") {
+    //     let dbUser = await prisma.user.findUnique({
+    //       where: { azureId: user.id },
+    //     });
+    //     if (!dbUser) {
+    //       dbUser = await prisma.user.create({
+    //         data: {
+    //           azureId: user.id,
+    //           email: user.email as string,
+    //           name: user.name,
+    //         },
+    //       });
+    //     }
+    //     return dbUser !== null;
+    //   }
+    //   return true;
+    // },
   },
 };

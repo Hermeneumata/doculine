@@ -1,5 +1,5 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
 import { Title, Text } from "@tremor/react";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { notFound } from "next/navigation";
@@ -43,7 +43,7 @@ export default async function Home({
           <Text>Here&apos;s a list of available projects</Text>
         </div>
         <Link
-          href={`/?${new URLSearchParams({
+          href={`/projects?${new URLSearchParams({
             ...searchParams,
             slideOver: "true",
           }).toString()}`}
