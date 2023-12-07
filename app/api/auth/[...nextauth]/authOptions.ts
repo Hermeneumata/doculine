@@ -1,5 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import AzureADProvider from "next-auth/providers/azure-ad";
+import prisma from "@/lib/db";
 
 import type { NextAuthOptions } from "next-auth";
 
@@ -31,4 +32,25 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      if (account?.provider === "azure-ad") {
+        let dbUser = await prisma.user.findUnique({
+          where: { azureId: user.id },
+        });
+        if (!dbUser) {
+          dbUser = await prisma.user.create({
+            data: {
+              azureId: user.id,
+              email: user.email as string,
+              name: user.name,
+            },
+          });
+        }
+
+        return dbUser !== null;
+      }
+      return true;
+    },
+  },
 };
