@@ -4,26 +4,34 @@ import { Fragment, useState, useEffect, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import NewRecordForm from "@/components/NewRecordForm";
-import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
+import NewTimelineForm from "@/components/NewTimelineForm";
+import createTimeline from "@/lib/createTimeline";
+import { User } from "@prisma/client";
+
+// import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
 import { Button } from "@tremor/react";
 
-export default function SlideOver({ title }: { title: string }) {
+export default function TimelineSlideOver({
+  title,
+  user,
+}: {
+  title: string;
+  user: User;
+}) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fileUploaded, setFileUploaded] = useState<any>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const nullDocument = {
-    title: "",
-    date: undefined as Date | undefined,
-    description: "",
-    downloadLink: "test",
-    documentType: "",
+  const nullTimeline = {
+    name: "",
+    owner: {
+      connect: {
+        id: user.id,
+      },
+    },
   };
 
-  const [document, setDocument] = useState(nullDocument);
+  const [timeline, setTimeline] = useState(nullTimeline);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -43,13 +51,11 @@ export default function SlideOver({ title }: { title: string }) {
     }
   }, [open]);
 
-  const handleSave = async (newDocument: NewDocumentDBModel) => {
+  const handleSave = async (newTimeline: any) => {
     setLoading(true);
-    await createDocument(newDocument);
-
+    await createTimeline(newTimeline);
     setLoading(false);
-
-    setDocument(nullDocument);
+    setTimeline(nullTimeline);
     router.refresh();
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
@@ -100,18 +106,10 @@ export default function SlideOver({ title }: { title: string }) {
                     className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      if (
-                        document.title &&
-                        document.date &&
-                        document.description &&
-                        document.documentType
-                      ) {
+                      if (timeline.name) {
                         handleSave({
-                          title: document.title,
-                          date: document.date.toISOString(),
-                          description: document.description,
-                          documentType: document.documentType,
-                          downloadLink: document.downloadLink,
+                          name: timeline.name,
+                          owner: timeline.owner,
                         });
                       }
                     }}
@@ -140,11 +138,9 @@ export default function SlideOver({ title }: { title: string }) {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <NewRecordForm
-                          inputFileRef={inputFileRef}
-                          setDocument={setDocument}
-                          document={document}
-                          setFileUploaded={setFileUploaded}
+                        <NewTimelineForm
+                          setTimeline={setTimeline}
+                          timeline={timeline}
                         />
                       </div>
                     </div>
@@ -160,13 +156,7 @@ export default function SlideOver({ title }: { title: string }) {
                       <Button
                         type="submit"
                         loading={loading}
-                        disabled={
-                          !document.title ||
-                          !document.date ||
-                          !document.description ||
-                          !document.documentType ||
-                          !fileUploaded
-                        }
+                        disabled={!timeline.name}
                       >
                         Save
                       </Button>
