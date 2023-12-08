@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { Title, Text, Card } from "@tremor/react";
+import { Title, Card } from "@tremor/react";
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { notFound } from "next/navigation";
@@ -8,6 +8,8 @@ import { getServerSession } from "next-auth/next";
 import Search from "@/components/Search";
 import DatePicker from "@/components/DatePicker";
 import DocumentSlideOver from "@/components/DocumentSlideOver";
+import ResetButton from "@/components/ResetButton";
+import DocumentStats from "@/components/DocumentStats";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +18,7 @@ export default async function Page({
   searchParams,
 }: {
   params: { projectId: string };
-  searchParams: { q: string; startDate: string; endDate: string };
+  searchParams: { q: string; startDate: string; endDate: string; type: string };
 }) {
   const session = await getServerSession();
   if (!session || !session?.user || !session?.user?.email) {
@@ -42,6 +44,7 @@ export default async function Page({
     searchParams.endDate && !isNaN(Number(searchParams.endDate))
       ? new Date(Number(searchParams.endDate))
       : "";
+  const type = searchParams.type ?? "";
 
   const project = await prisma.timeline.findUnique({
     where: {
@@ -61,6 +64,13 @@ export default async function Page({
                 },
               }
             : {}),
+          ...(type
+            ? {
+                documentType: {
+                  equals: type,
+                },
+              }
+            : {}),
         },
         orderBy: {
           date: "desc",
@@ -72,6 +82,8 @@ export default async function Page({
   if (!project) {
     return notFound();
   }
+
+  const isFiltered = search || startDate || endDate || type;
 
   return (
     <>
@@ -95,9 +107,11 @@ export default async function Page({
         </Link>
       </div>
 
+      <DocumentStats documents={project.documents} projectId={projectId} />
       <div className="flex flex-col md:flex-row gap-2 mt-4">
         <Search />
         <DatePicker />
+        {isFiltered && <ResetButton />}
       </div>
       <Card className="mt-6">
         <Timeline

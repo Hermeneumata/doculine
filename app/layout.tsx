@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import classNames from "classnames";
 import Nav from "@/components/Nav";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -10,7 +10,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Doctrail",
   description: "Timeline of documents",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default async function RootLayout({
@@ -24,7 +29,7 @@ export default async function RootLayout({
         <Suspense>
           <Nav />
         </Suspense>
-        <main className="p-4 md:p-10 mx-auto max-w-7xl">{children}</main>
+        <main className="p-4 md:px-10 mx-auto max-w-7xl">{children}</main>
       </body>
     </html>
   );
