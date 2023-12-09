@@ -7,9 +7,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewTimelineForm from "@/components/NewTimelineForm";
 import createTimeline from "@/lib/createTimeline";
 import { User } from "@prisma/client";
-
-// import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
 import { Button } from "@tremor/react";
+import { NewTimeline } from "@/lib/types";
 
 export default function TimelineSlideOver({
   title,
@@ -31,7 +30,7 @@ export default function TimelineSlideOver({
     },
   };
 
-  const [timeline, setTimeline] = useState(nullTimeline);
+  const [timeline, setTimeline] = useState<NewTimeline>(nullTimeline);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -51,7 +50,7 @@ export default function TimelineSlideOver({
     }
   }, [open]);
 
-  const handleSave = async (newTimeline: any) => {
+  const handleSave = async (newTimeline: NewTimeline) => {
     setLoading(true);
     await createTimeline(newTimeline);
     setLoading(false);

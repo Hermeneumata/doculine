@@ -14,7 +14,6 @@ function TimelineRecord({
   description,
   downloadLink,
   documentType,
-  latest,
   deleteEnabled,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);

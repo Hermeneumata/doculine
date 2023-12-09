@@ -28,9 +28,36 @@ export interface Document {
   createdById: string;
 }
 
+export type NewDocument = {
+  title: string;
+  date: Date | undefined;
+  description: string;
+  downloadLink: string;
+  documentType: string;
+  createdBy: {
+    connect: {
+      id: string;
+    };
+  };
+  timeline: {
+    connect: {
+      id: string;
+    };
+  };
+};
+
 export interface Timeline {
   id: string;
   name: string;
   owner: User;
   documents: Document[];
 }
+
+export type NewTimeline = {
+  name: string;
+  owner: {
+    connect: {
+      id: string | number;
+    };
+  };
+};

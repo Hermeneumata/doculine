@@ -2,7 +2,7 @@
 
 import { TextInput, DatePicker, Select, SelectItem } from "@tremor/react";
 import { getIconForDocumentType } from "@/lib/utils";
-import { DocumentType } from "@/lib/types";
+import { DocumentType, NewDocument } from "@/lib/types";
 import FileUpload from "@/components/FileUpload";
 import Label from "@/components/Label";
 import TextArea from "@/components/TextArea";
@@ -13,27 +13,13 @@ export default function NewDocumentForm({
   inputFileRef,
   setFileUploaded,
 }: {
-  setDocument: any;
-  document: any;
+  setDocument: React.Dispatch<React.SetStateAction<NewDocument>>;
+  document: NewDocument;
   inputFileRef: any;
   setFileUploaded: any;
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-      {/* <div className="sm:col-span-6">
-        <Label htmlFor="title">Title</Label>
-        <div className="mt-2">
-          <TextInput
-            id="title"
-            name="title"
-            value={document.title}
-            onChange={(e) =>
-              setDocument({ ...document, title: e.target.value })
-            }
-            placeholder="Title"
-          />
-        </div>
-      </div> */}
       <div className="sm:col-span-6">
         <label
           htmlFor="date-picker"
@@ -50,51 +36,6 @@ export default function NewDocumentForm({
           />
         </div>
       </div>
-      {/* <div className="sm:col-span-6">
-        <Label>Document Type</Label>
-        <div className="mt-2">
-          <Select
-            value={document.documentType}
-            onValueChange={(value) =>
-              setDocument({
-                ...document,
-                documentType: value as DocumentType,
-              })
-            }
-          >
-            <SelectItem
-              value={DocumentType.Document}
-              icon={getIconForDocumentType(DocumentType.Document)}
-            >
-              Document
-            </SelectItem>
-            <SelectItem
-              value={DocumentType.Image}
-              icon={getIconForDocumentType(DocumentType.Image)}
-            >
-              Picture
-            </SelectItem>
-            <SelectItem
-              value={DocumentType.Video}
-              icon={getIconForDocumentType(DocumentType.Video)}
-            >
-              Video
-            </SelectItem>
-            <SelectItem
-              value={DocumentType.Audio}
-              icon={getIconForDocumentType(DocumentType.Audio)}
-            >
-              Audio
-            </SelectItem>
-            <SelectItem
-              value={DocumentType.Archive}
-              icon={getIconForDocumentType(DocumentType.Archive)}
-            >
-              Archive
-            </SelectItem>
-          </Select>
-        </div>
-      </div> */}
       <div className="col-span-full">
         <Label htmlFor="description">Description</Label>
         <div className="mt-2">
@@ -111,7 +52,7 @@ export default function NewDocumentForm({
       </div>
       <div className="col-span-full">
         <Label htmlFor="description">File</Label>
-        <FileUpload />
+        <FileUpload document={document} setDocument={setDocument} />
       </div>
     </div>
   );

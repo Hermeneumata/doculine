@@ -1,47 +1,80 @@
 "use client";
 import { useState } from "react";
 import { DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import MsgReader from "@kenjiuno/msgreader";
 import cx from "classnames";
+import { NewDocument } from "@/lib/types";
 
-export default function FileUplaod() {
+export default function FileUplaod({
+  document,
+  setDocument,
+}: {
+  document: NewDocument;
+  setDocument: (value: NewDocument) => void;
+}) {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [filename, setFilename] = useState("");
 
-  const dragOver = (e) => {
+  const dragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(true);
   };
 
-  const dragEnter = (e) => {
+  const dragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(true);
   };
 
-  const dragLeave = (e) => {
+  const dragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
   };
 
-  const fileDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    const files = e.dataTransfer.files;
-    console.log(files);
-
-    if (files.length > 0) {
-      const file = files[0];
-      setFile(file);
+  const handleMsgFile = (file: File) => {
+    if (file.name.endsWith(".msg")) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (e.target && e.target.result instanceof ArrayBuffer) {
+          const arrayBuffer = e.target.result;
+          const msgFile = new MsgReader(arrayBuffer);
+          const msgData = msgFile.getFileData();
+          if (!msgData.error) {
+            const headers = msgData.headers;
+            if (headers) {
+              const dateHeader = headers.match(/Date: (.*)/);
+              console.info("header: ", dateHeader);
+              if (dateHeader && dateHeader[1]) {
+                const dateStr = dateHeader[1];
+                const dateObj = new Date(dateStr);
+                setDocument({ ...document, date: dateObj, title: file.name });
+              }
+            }
+          }
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
   };
 
-  const fileInputChanged = (e) => {
+  const fileInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      setFile(file);
+      handleMsgFile(file);
+    }
+  };
+
+  const fileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const files = e.dataTransfer.files;
 
     if (files.length > 0) {
       const file = files[0];
       setFile(file);
-      setFilename(file.name);
+      handleMsgFile(file);
     }
   };
 
@@ -85,17 +118,17 @@ export default function FileUplaod() {
           </div>
         </div>
       </div>
-      {filename && (
+      {file && (
         <div className="bg-gray-100 p-4 rounded-lg inline-block mt-4">
           <div className="flex gap-4 items-center">
             <DocumentIcon
               className="h-6 w-6 text-gray-300"
               aria-hidden="true"
             />
-            <p className="text-gray-500">{filename}</p>
+            <p className="text-gray-500">{file.name}</p>
             <button
               className="ml-auto text-gray-500 hover:text-gray-700"
-              onClick={() => setFilename("")}
+              onClick={() => setFile(null)}
             >
               <XMarkIcon className="h-5 w-5" aria-hidden="true" />
             </button>

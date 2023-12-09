@@ -5,7 +5,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewDocumentForm from "@/components/NewDocumentForm";
-import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
+import createDocument from "@/lib/createDocument";
+import { NewDocument } from "@/lib/types";
 import { Button } from "@tremor/react";
 import { User } from "@prisma/client";
 
@@ -20,11 +21,11 @@ export default function SlideOver({
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fileUploaded, setFileUploaded] = useState<any>(false);
+  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const nullDocument = {
+  const nullDocument: NewDocument = {
     title: "",
     date: undefined as Date | undefined,
     description: "",
@@ -42,7 +43,7 @@ export default function SlideOver({
     },
   };
 
-  const [document, setDocument] = useState(nullDocument);
+  const [document, setDocument] = useState<NewDocument>(nullDocument);
 
   const router = useRouter();
   const pathname = usePathname();

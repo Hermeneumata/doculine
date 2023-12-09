@@ -2,13 +2,14 @@
 
 import { TextInput } from "@tremor/react";
 import Label from "@/components/Label";
+import { NewTimeline } from "@/lib/types";
 
 export default function NewTimelineForm({
   setTimeline,
   timeline,
 }: {
-  setTimeline: any;
-  timeline: any;
+  setTimeline: (value: NewTimeline) => void;
+  timeline: NewTimeline;
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -18,7 +19,7 @@ export default function NewTimelineForm({
           <TextInput
             id="name"
             name="name"
-            value={timeline.title}
+            value={timeline.name}
             onChange={(e) => setTimeline({ ...timeline, name: e.target.value })}
             placeholder="Name"
           />
