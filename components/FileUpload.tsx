@@ -89,8 +89,8 @@ export default function FileUplaod({
       >
         <div
           className={cx(
-            "flex max-w-2xl justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10",
-            dragging ? "bg-gray-100" : ""
+            "flex max-w-2xl justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 hover:bg-gray-50",
+            dragging ? "bg-gray-50" : ""
           )}
         >
           <div className="text-center">
