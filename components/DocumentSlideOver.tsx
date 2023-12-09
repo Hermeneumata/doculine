@@ -4,7 +4,7 @@ import { Fragment, useState, useEffect, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import NewRecordForm from "@/components/NewRecordForm";
+import NewDocumentForm from "@/components/NewDocumentForm";
 import createDocument, { NewDocumentDBModel } from "@/lib/createDocument";
 import { Button } from "@tremor/react";
 import { User } from "@prisma/client";
@@ -161,7 +161,7 @@ export default function SlideOver({
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <NewRecordForm
+                        <NewDocumentForm
                           inputFileRef={inputFileRef}
                           setDocument={setDocument}
                           document={document}

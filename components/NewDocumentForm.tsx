@@ -7,7 +7,7 @@ import FileUpload from "@/components/FileUpload";
 import Label from "@/components/Label";
 import TextArea from "@/components/TextArea";
 
-export default function NewRecordForm({
+export default function NewDocumentForm({
   setDocument,
   document,
   inputFileRef,
@@ -20,7 +20,7 @@ export default function NewRecordForm({
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-      <div className="sm:col-span-6">
+      {/* <div className="sm:col-span-6">
         <Label htmlFor="title">Title</Label>
         <div className="mt-2">
           <TextInput
@@ -33,7 +33,7 @@ export default function NewRecordForm({
             placeholder="Title"
           />
         </div>
-      </div>
+      </div> */}
       <div className="sm:col-span-6">
         <label
           htmlFor="date-picker"
@@ -50,7 +50,7 @@ export default function NewRecordForm({
           />
         </div>
       </div>
-      <div className="sm:col-span-6">
+      {/* <div className="sm:col-span-6">
         <Label>Document Type</Label>
         <div className="mt-2">
           <Select
@@ -94,7 +94,7 @@ export default function NewRecordForm({
             </SelectItem>
           </Select>
         </div>
-      </div>
+      </div> */}
       <div className="col-span-full">
         <Label htmlFor="description">Description</Label>
         <div className="mt-2">
@@ -110,15 +110,8 @@ export default function NewRecordForm({
         </div>
       </div>
       <div className="col-span-full">
-        <Label htmlFor="description">Attachment</Label>
-        <div className="mt-2">
-          <input
-            name="file"
-            ref={inputFileRef}
-            type="file"
-            onChange={() => setFileUploaded(true)}
-          />
-        </div>
+        <Label htmlFor="description">File</Label>
+        <FileUpload />
       </div>
     </div>
   );
