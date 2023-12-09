@@ -4,6 +4,7 @@ import { DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import MsgReader from "@kenjiuno/msgreader";
 import cx from "classnames";
 import { NewDocument } from "@/lib/types";
+import { useRef } from "react";
 
 export default function FileUplaod({
   document,
@@ -12,6 +13,8 @@ export default function FileUplaod({
   document: NewDocument;
   setDocument: (value: NewDocument) => void;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
@@ -30,39 +33,61 @@ export default function FileUplaod({
     setDragging(false);
   };
 
+  const resetFileInput = () => {
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleMsgFile = (file: File) => {
-    if (file.name.endsWith(".msg")) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        if (e.target && e.target.result instanceof ArrayBuffer) {
-          const arrayBuffer = e.target.result;
-          const msgFile = new MsgReader(arrayBuffer);
-          const msgData = msgFile.getFileData();
-          if (!msgData.error) {
-            const headers = msgData.headers;
-            if (headers) {
-              const dateHeader = headers.match(/Date: (.*)/);
-              console.info("header: ", dateHeader);
-              if (dateHeader && dateHeader[1]) {
-                const dateStr = dateHeader[1];
-                const dateObj = new Date(dateStr);
-                setDocument({ ...document, date: dateObj, title: file.name });
-              }
+    const reader = new FileReader();
+    const fileType = file.name.split(".").pop() || "unknown";
+    reader.onload = function (e) {
+      if (e.target && e.target.result instanceof ArrayBuffer) {
+        const arrayBuffer = e.target.result;
+        const msgFile = new MsgReader(arrayBuffer);
+        const msgData = msgFile.getFileData();
+        if (!msgData.error) {
+          const headers = msgData.headers;
+          if (headers) {
+            const dateHeader = headers.match(/Date: (.*)/);
+            if (dateHeader && dateHeader[1]) {
+              const dateStr = dateHeader[1];
+              const dateObj = new Date(dateStr);
+              setDocument({
+                ...document,
+                date: dateObj,
+                title: file.name,
+                description: msgData.subject || "",
+                documentType: fileType,
+              });
             }
+          } else {
+            setDocument({
+              ...document,
+              description: msgData.subject || "",
+              title: file.name,
+              documentType: fileType,
+            });
           }
         }
-      };
-      reader.readAsArrayBuffer(file);
-    }
+      }
+    };
+    reader.readAsArrayBuffer(file);
   };
 
   const fileInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-
     if (files && files.length > 0) {
       const file = files[0];
+      const fileType = file.name.split(".").pop() || "unknown";
       setFile(file);
-      handleMsgFile(file);
+      if (file.name.endsWith(".msg")) {
+        handleMsgFile(file);
+      } else {
+        setDocument({ ...document, title: file.name, documentType: fileType });
+      }
     }
   };
 
@@ -71,10 +96,15 @@ export default function FileUplaod({
     setDragging(false);
     const files = e.dataTransfer.files;
 
-    if (files.length > 0) {
+    if (files && files.length > 0) {
       const file = files[0];
       setFile(file);
-      handleMsgFile(file);
+      if (file.name.endsWith(".msg")) {
+        handleMsgFile(file);
+      } else {
+        const fileType = file.name.split(".").pop() || "unknown";
+        setDocument({ ...document, title: file.name, documentType: fileType });
+      }
     }
   };
 
@@ -106,6 +136,7 @@ export default function FileUplaod({
               >
                 <span>Upload a file</span>
                 <input
+                  ref={fileInputRef}
                   id="file-upload"
                   name="file-upload"
                   type="file"
@@ -128,7 +159,7 @@ export default function FileUplaod({
             <p className="text-gray-500">{file.name}</p>
             <button
               className="ml-auto text-gray-500 hover:text-gray-700"
-              onClick={() => setFile(null)}
+              onClick={resetFileInput}
             >
               <XMarkIcon className="h-5 w-5" aria-hidden="true" />
             </button>

@@ -1,6 +1,7 @@
 import { Document } from "@/lib/types";
 import { getIconForDocumentType } from "@/lib/utils";
 import DocumentRemoveButton from "@/components/DocumentRemoveButton";
+import Link from "next/link";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
@@ -15,6 +16,7 @@ function TimelineRecord({
   downloadLink,
   documentType,
   deleteEnabled,
+  createdBy,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
   return (
@@ -37,6 +39,15 @@ function TimelineRecord({
           year: "numeric",
         })}
       </time>
+      <p className="mb-4 text-xs font-normal text-gray-500">
+        Added by{" "}
+        <Link
+          className=" text-blue-500 hover:text-blue-400 hover:underline"
+          href={`mailto:${createdBy.email}`}
+        >
+          {createdBy.name}
+        </Link>
+      </p>
       <p className="mb-4 text-base font-normal text-gray-500">{description}</p>
       <a
         href={downloadLink}

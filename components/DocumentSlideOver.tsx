@@ -21,7 +21,6 @@ export default function SlideOver({
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -163,10 +162,8 @@ export default function SlideOver({
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         <NewDocumentForm
-                          inputFileRef={inputFileRef}
                           setDocument={setDocument}
                           document={document}
-                          setFileUploaded={setFileUploaded}
                         />
                       </div>
                     </div>
@@ -186,8 +183,7 @@ export default function SlideOver({
                           !document.title ||
                           !document.date ||
                           !document.description ||
-                          !document.documentType ||
-                          !fileUploaded
+                          !document.documentType
                         }
                       >
                         Save

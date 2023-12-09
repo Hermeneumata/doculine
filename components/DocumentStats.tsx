@@ -33,7 +33,6 @@ export default function DocumentStats({
             )}
           >
             {count} {documentType}
-            {count === 1 ? "" : "s"}
           </Link>
         </div>
       ))}

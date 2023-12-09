@@ -52,6 +52,9 @@ export default async function Page({
     },
     include: {
       documents: {
+        include: {
+          createdBy: true,
+        },
         where: {
           title: {
             contains: search,

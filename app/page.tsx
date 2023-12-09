@@ -29,7 +29,11 @@ export default async function Home({
   const timelines = await prisma.timeline.findMany({
     include: {
       owner: true,
-      documents: true,
+      documents: {
+        include: {
+          createdBy: true,
+        },
+      },
     },
   });
 

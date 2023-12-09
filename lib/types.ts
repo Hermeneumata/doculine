@@ -24,6 +24,7 @@ export interface Document {
   documentType: string;
   createdAt: Date;
   updatedAt: Date;
+  createdBy: User;
   timelineId: string;
   createdById: string;
 }
