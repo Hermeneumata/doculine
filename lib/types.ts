@@ -7,10 +7,12 @@ export enum DocumentType {
 }
 
 export type User = {
-  id?: string;
-  name?: string;
-  email?: string;
-  image?: string;
+  id: string;
+  azureId: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export interface Document {
@@ -20,4 +22,43 @@ export interface Document {
   description: string;
   downloadLink: string;
   documentType: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: User;
+  timelineId: string;
+  createdById: string;
 }
+
+export type NewDocument = {
+  title: string;
+  date: Date | undefined;
+  description: string;
+  downloadLink: string;
+  documentType: string;
+  createdBy: {
+    connect: {
+      id: string;
+    };
+  };
+  timeline: {
+    connect: {
+      id: string;
+    };
+  };
+};
+
+export interface Timeline {
+  id: string;
+  name: string;
+  owner: User;
+  documents: Document[];
+}
+
+export type NewTimeline = {
+  name: string;
+  owner: {
+    connect: {
+      id: string | number;
+    };
+  };
+};
