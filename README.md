@@ -40,11 +40,7 @@ The application is deployed on Azure Web Services as a web app. The database is 
 
 The application uses environment variables for configuration. These variables should be defined in a .env file, which is ignored by Git. Here are the necessary environment variables:
 
-- `NEXTAUTH_SECRET`: This is a secret used by NextAuth for encryption. It is recommended to be a random string of 32 characters. You can generate this variable by running the following command in PowerShell:
-  )
-
-Or on a Linux machine:
-32
+- `NEXTAUTH_SECRET`: This is a secret used by NextAuth for encryption. It is recommended to be a random string of 32 characters.
 
 - `NEXTAUTH_URL`: This is the base URL of your NextAuth configuration. On localhost, it should be set to "http://localhost:3000/api/auth". On production, it should be the URL of your app with "/api/auth" appended.
 
@@ -78,19 +74,11 @@ For a user to have access to the application, they must be a member of the Azure
 
 The application uses Prisma as the ORM and SQL Server hosted on Azure as the database. To configure the database, you need to add DATABASE_URL and SHADOW_DATABASE_URL to the environment variables in the .env file.
 
-- DATABASE_URL: This is the connection string to the SQL Server database. It should be in the following format: sqlserver://<username>:<password>@<hostname>:<port>;database=<database_name>;.
+- DATABASE_URL: This is the connection string to the SQL Server database.
 
 - SHADOW_DATABASE_URL: This is the connection string to the shadow database. The shadow database is a copy of your production database schema which Prisma uses to generate and test the SQL migration scripts. It should be in the same format as DATABASE_URL.
 
-After setting up the environment variables, you can run the Prisma migrations using the following command:
-
-```
-npx prisma migrate dev
-```
-
-This command will apply the migrations to your database. Make sure to run this command whenever you make changes to your Prisma schema.
-
-Continuous Integration and Deployment (CI/CD)
+## Continuous Integration and Deployment (CI/CD)
 
 The project uses GitHub Actions for continuous integration and deployment. The workflow is defined in the .github/workflows/azure-webapps-node.yml file.
 
@@ -98,11 +86,11 @@ When a pull request is merged into the main branch, the workflow is triggered. T
 
 1. The project is built using the npm run build command.
 
-2. The Prisma migrations are run using the npx prisma migrate deploy command. This applies any new migrations to the database.
+2. The Prisma migrations are run using the `npx prisma migrate deploy` command. This applies any new migrations to the database.
 
 3. The application is deployed to the Azure Web App.
 
-This setup ensures that the application is automatically tested, built, and deployed whenever changes are merged into the main branch. This helps to catch and fix any errors quickly and ensures that the deployed application is always up-to-date with the latest changes.
+This setup ensures that the application is automatically built, and deployed whenever changes are merged into the main branch.
 
 ### Further Information
 
