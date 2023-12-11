@@ -33,7 +33,12 @@ export default function NewTimelineForm({
             name="resourcePath"
             value={timeline.resourcePath}
             onChange={(e) =>
-              setTimeline({ ...timeline, resourcePath: e.target.value })
+              setTimeline({
+                ...timeline,
+                resourcePath: e.target.value.endsWith("\\")
+                  ? e.target.value
+                  : e.target.value + "\\",
+              })
             }
             placeholder="Folder path"
           />
