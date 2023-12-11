@@ -13,11 +13,13 @@ import { User } from "@prisma/client";
 export default function SlideOver({
   title,
   timelineId,
+  timelineResourcePath,
   user,
 }: {
   title: string;
   timelineId: string;
   user: User;
+  timelineResourcePath: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export default function SlideOver({
     title: "",
     date: undefined as Date | undefined,
     description: "",
-    downloadLink: "test",
+    downloadLink: timelineResourcePath,
     documentType: "",
     createdBy: {
       connect: {
@@ -164,6 +166,7 @@ export default function SlideOver({
                         <NewDocumentForm
                           setDocument={setDocument}
                           document={document}
+                          resourcePath={timelineResourcePath}
                         />
                       </div>
                     </div>

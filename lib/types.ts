@@ -50,12 +50,15 @@ export type NewDocument = {
 export interface Timeline {
   id: string;
   name: string;
+  resourcePath: string;
   owner: User;
   documents: Document[];
 }
 
 export type NewTimeline = {
+  id?: string;
   name: string;
+  resourcePath: string;
   owner: {
     connect: {
       id: string | number;

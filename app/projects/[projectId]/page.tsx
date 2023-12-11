@@ -94,6 +94,7 @@ export default async function Page({
         title="Add new record"
         user={user}
         timelineId={projectId}
+        timelineResourcePath={project.resourcePath}
       />
 
       <div className="flex justify-between items-center">

@@ -25,6 +25,20 @@ export default function NewTimelineForm({
           />
         </div>
       </div>
+      <div className="sm:col-span-6">
+        <Label htmlFor="title">Folder Path</Label>
+        <div className="mt-2">
+          <TextInput
+            id="resourcePath"
+            name="resourcePath"
+            value={timeline.resourcePath}
+            onChange={(e) =>
+              setTimeline({ ...timeline, resourcePath: e.target.value })
+            }
+            placeholder="Folder path"
+          />
+        </div>
+      </div>
     </div>
   );
 }

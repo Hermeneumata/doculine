@@ -95,12 +95,13 @@ export default async function Timeline({
     },
     0
   );
+
   return (
     <ol className="relative border-l border-gray-200">
       {documents.map((document, index) => (
         <TimelineRecord
           deleteEnabled={
-            projectOwnerId === userId || projectOwnerId === document.createdById
+            projectOwnerId === userId || document.createdById === userId
           }
           key={`${document.id}`}
           latest={index === latestDocumentIndex}

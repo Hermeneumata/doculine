@@ -9,15 +9,21 @@ import TextArea from "@/components/TextArea";
 export default function NewDocumentForm({
   setDocument,
   document,
+  resourcePath,
 }: {
   setDocument: React.Dispatch<React.SetStateAction<NewDocument>>;
   document: NewDocument;
+  resourcePath: string;
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
       <div className="col-span-full">
         <Label htmlFor="description">File</Label>
-        <FileUpload document={document} setDocument={setDocument} />
+        <FileUpload
+          document={document}
+          setDocument={setDocument}
+          resourcePath={resourcePath}
+        />
       </div>
       <div className="sm:col-span-6">
         <Label htmlFor="title">Name</Label>
@@ -46,6 +52,23 @@ export default function NewDocumentForm({
             value={document.date}
             onValueChange={(value) => setDocument({ ...document, date: value })}
             placeholder="Date"
+          />
+        </div>
+      </div>
+      <div className="sm:col-span-6">
+        <Label htmlFor="location">Location</Label>
+        <div className="mt-2">
+          <TextInput
+            id="location"
+            name="downloadLink"
+            value={document.downloadLink}
+            onChange={(e) =>
+              setDocument({
+                ...document,
+                downloadLink: e.target.value,
+              })
+            }
+            placeholder="Title"
           />
         </div>
       </div>

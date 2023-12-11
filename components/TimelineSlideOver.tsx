@@ -6,7 +6,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewTimelineForm from "@/components/NewTimelineForm";
 import createTimeline from "@/lib/createTimeline";
-import { User } from "@prisma/client";
+import { Timeline, User } from "@prisma/client";
 import { Button } from "@tremor/react";
 import { NewTimeline } from "@/lib/types";
 
@@ -23,13 +23,13 @@ export default function TimelineSlideOver({
 
   const nullTimeline = {
     name: "",
+    resourcePath: "",
     owner: {
       connect: {
         id: user.id,
       },
     },
   };
-
   const [timeline, setTimeline] = useState<NewTimeline>(nullTimeline);
 
   const router = useRouter();
@@ -67,6 +67,7 @@ export default function TimelineSlideOver({
   const handleClose = () => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
+    current.delete("edit");
     const search = current.toString();
     const query = search ? `?${search}` : "";
     setOpen(false);
@@ -108,6 +109,7 @@ export default function TimelineSlideOver({
                       if (timeline.name) {
                         handleSave({
                           name: timeline.name,
+                          resourcePath: timeline.resourcePath,
                           owner: timeline.owner,
                         });
                       }

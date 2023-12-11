@@ -9,9 +9,11 @@ import { useRef } from "react";
 export default function FileUplaod({
   document,
   setDocument,
+  resourcePath,
 }: {
   document: NewDocument;
   setDocument: (value: NewDocument) => void;
+  resourcePath: string;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,6 +63,7 @@ export default function FileUplaod({
                 title: file.name,
                 description: msgData.subject || "",
                 documentType: fileType,
+                downloadLink: [resourcePath, file.name].join(""),
               });
             }
           } else {
@@ -69,6 +72,7 @@ export default function FileUplaod({
               description: msgData.subject || "",
               title: file.name,
               documentType: fileType,
+              downloadLink: [resourcePath, file.name].join(""),
             });
           }
         }
@@ -86,7 +90,12 @@ export default function FileUplaod({
       if (file.name.endsWith(".msg")) {
         handleMsgFile(file);
       } else {
-        setDocument({ ...document, title: file.name, documentType: fileType });
+        setDocument({
+          ...document,
+          title: file.name,
+          documentType: fileType,
+          downloadLink: [resourcePath, file.name].join(""),
+        });
       }
     }
   };
@@ -103,7 +112,12 @@ export default function FileUplaod({
         handleMsgFile(file);
       } else {
         const fileType = file.name.split(".").pop() || "unknown";
-        setDocument({ ...document, title: file.name, documentType: fileType });
+        setDocument({
+          ...document,
+          title: file.name,
+          documentType: fileType,
+          downloadLink: [resourcePath, file.name].join(""),
+        });
       }
     }
   };

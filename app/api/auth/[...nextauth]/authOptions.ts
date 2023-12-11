@@ -18,13 +18,20 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const user = { id: "1", name: "Test", email: "test@test.com" };
+        const testUser1 = { id: "1", name: "Test", email: "test@test.com" };
+        const testUser2 = { id: "2", name: "Test 2", email: "test2@test.com" };
         if (
           credentials &&
           credentials.username === "test" &&
           credentials.password === "test"
         ) {
-          return user;
+          return testUser1;
+        } else if (
+          credentials &&
+          credentials.username === "test2" &&
+          credentials.password === "test2"
+        ) {
+          return testUser2;
         } else {
           return null;
         }
@@ -32,23 +39,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    // async signIn({ user, account }) {
-    //   if (account?.provider === "azure-ad") {
-    //     let dbUser = await prisma.user.findUnique({
-    //       where: { azureId: user.id },
-    //     });
-    //     if (!dbUser) {
-    //       dbUser = await prisma.user.create({
-    //         data: {
-    //           azureId: user.id,
-    //           email: user.email as string,
-    //           name: user.name,
-    //         },
-    //       });
-    //     }
-    //     return dbUser !== null;
-    //   }
-    //   return true;
-    // },
+    async signIn({ user, account }) {
+      if (account?.provider === "azure-ad") {
+        let dbUser = await prisma.user.findUnique({
+          where: { azureId: user.id },
+        });
+        if (!dbUser) {
+          dbUser = await prisma.user.create({
+            data: {
+              azureId: user.id,
+              email: user.email as string,
+              name: user.name,
+            },
+          });
+        }
+        return dbUser !== null;
+      }
+      return true;
+    },
   },
 };

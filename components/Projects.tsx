@@ -17,9 +17,11 @@ import { User } from "@prisma/client";
 export default function Projects({
   timelines,
   user,
+  searchParams,
 }: {
   timelines: Timeline[];
   user: User;
+  searchParams: { q: string; startDate: string; endDate: string };
 }) {
   if (!timelines.length) {
     return (
@@ -36,11 +38,12 @@ export default function Projects({
           <TableHeaderCell>Name</TableHeaderCell>
           <TableHeaderCell>Project Manager</TableHeaderCell>
           <TableHeaderCell>Document Count</TableHeaderCell>
+          <TableHeaderCell>Path</TableHeaderCell>
           <TableHeaderCell>Actions</TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {timelines.map(({ id, name, owner, documents }) => (
+        {timelines.map(({ id, name, owner, documents, resourcePath }) => (
           <TableRow key={id}>
             <TableCell>
               <Link
@@ -60,6 +63,13 @@ export default function Projects({
             </TableCell>
             <TableCell>{documents.length}</TableCell>
             <TableCell>
+              <div className="tooltip">
+                {resourcePath.length > 20
+                  ? resourcePath.substring(0, 20) + "..."
+                  : resourcePath}
+              </div>
+            </TableCell>
+            <TableCell>
               <div className="flex items-center gap-4">
                 <Link
                   href={`/projects/${id}`}
@@ -69,7 +79,11 @@ export default function Projects({
                   <FolderOpenIcon className="w-5 h-5 text-gray-500 hover:text-blue-500" />
                 </Link>
                 {/* <Link
-                  href={`/${id}`}
+                  href={`/?${new URLSearchParams({
+                    ...searchParams,
+                    slideOver: "true",
+                    edit: id,
+                  }).toString()}`}
                   className="text-blue-500 hover:text-blue-400 hover:underline"
                 >
                   <span className="sr-only">Edit</span>

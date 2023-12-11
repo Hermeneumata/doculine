@@ -16,16 +16,17 @@ model User {
   name      String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  timelines Timeline[]
   documents Document[] @relation("CreatedBy")
+  timelines Timeline[]
 }
 
 model Timeline {
-  id        String     @id @default(uuid())
-  name      String
-  documents Document[]
-  owner     User       @relation(fields: [ownerId], references: [id])
-  ownerId   String
+  id           String     @id @default(uuid())
+  name         String
+  ownerId      String
+  resourcePath String
+  documents    Document[]
+  owner        User       @relation(fields: [ownerId], references: [id])
 }
 
 model Document {
@@ -37,8 +38,8 @@ model Document {
   documentType String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  timelineId   String
-  timeline     Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade)
-  createdBy    User     @relation("CreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   createdById  String
+  timelineId   String
+  createdBy    User     @relation("CreatedBy", fields: [createdById], references: [id], onUpdate: NoAction)
+  timeline     Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade)
 }

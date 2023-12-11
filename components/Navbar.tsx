@@ -4,7 +4,11 @@ import { Fragment } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  ChevronDownIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,9 +55,9 @@ export default function Navbar({ user }: { user: any }) {
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <Menu.Button className="flex items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                       <span className="sr-only">Open user menu</span>
-                      <UserAvatar />
+                      <UserAvatar user={user} />
                     </Menu.Button>
                   </div>
                   <Transition
@@ -134,25 +138,7 @@ export default function Navbar({ user }: { user: any }) {
             <div className="border-t border-gray-200 pt-4 pb-3">
               {user ? (
                 <>
-                  <div className="flex items-center px-4">
-                    <div className="flex-shrink-0">
-                      <Image
-                        className="h-8 w-8 rounded-full"
-                        src={user?.image || "https://avatar.vercel.sh/leerob"}
-                        height={32}
-                        width={32}
-                        alt={`${user.name} avatar`}
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">
-                        {user.name}
-                      </div>
-                      <div className="text-sm font-medium text-gray-500">
-                        {user.email}
-                      </div>
-                    </div>
-                  </div>
+                  <UserAvatar user={user} />
                   <div className="mt-3 space-y-1">
                     <button
                       onClick={() => signOut()}

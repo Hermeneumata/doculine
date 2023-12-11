@@ -18,6 +18,7 @@ export default async function Home({
   if (!session || !session?.user || !session?.user?.email) {
     return notFound();
   }
+
   const user = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,
@@ -58,7 +59,7 @@ export default async function Home({
         </Link>
       </div>
 
-      <Projects timelines={timelines} user={user} />
+      <Projects timelines={timelines} user={user} searchParams={searchParams} />
     </>
   );
 }

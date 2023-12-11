@@ -8,7 +8,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Doctrail",
+  title: "Hydrock | Doculine",
   description: "Timeline of documents",
 };
 
