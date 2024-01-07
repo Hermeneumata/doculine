@@ -7,11 +7,13 @@ import Label from "@/components/Label";
 import TextArea from "@/components/TextArea";
 
 export default function NewDocumentForm({
+  isEdit,
   inputFileRef,
   setDocument,
   document,
   setFileUploaded,
 }: {
+  isEdit: boolean;
   inputFileRef: React.RefObject<HTMLInputElement>;
   setDocument: React.Dispatch<React.SetStateAction<NewDocument>>;
   document: NewDocument;
@@ -19,15 +21,17 @@ export default function NewDocumentForm({
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-      <div className="col-span-full">
-        <Label htmlFor="description">File</Label>
-        <FileUpload
-          inputFileRef={inputFileRef}
-          document={document}
-          setDocument={setDocument}
-          setFileUploaded={setFileUploaded}
-        />
-      </div>
+      {!isEdit && (
+        <div className="col-span-full">
+          <Label htmlFor="description">File</Label>
+          <FileUpload
+            inputFileRef={inputFileRef}
+            document={document}
+            setDocument={setDocument}
+            setFileUploaded={setFileUploaded}
+          />
+        </div>
+      )}
       <div className="sm:col-span-6">
         <Label htmlFor="title">Name</Label>
         <div className="mt-2">

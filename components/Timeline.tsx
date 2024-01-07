@@ -3,10 +3,13 @@ import { getIconForDocumentType } from "@/lib/utils";
 import DocumentRemoveButton from "@/components/DocumentRemoveButton";
 import Link from "next/link";
 import DownloadDocumentButton from "./DownloadDocumentButton";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
   deleteEnabled: boolean;
+  searchParams: { q: string; startDate: string; endDate: string };
+  projectId: string;
 };
 
 function TimelineRecord({
@@ -18,6 +21,8 @@ function TimelineRecord({
   documentType,
   deleteEnabled,
   createdBy,
+  searchParams,
+  projectId,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
 
@@ -28,11 +33,21 @@ function TimelineRecord({
       </span>
       <div className="flex justify-between w-full relative">
         <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
-        {deleteEnabled && (
-          <div className="pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-30">
-            <DocumentRemoveButton id={id} />
-          </div>
-        )}
+
+        <div className="flex items-center gap-2 pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-30">
+          <Link
+            href={`/projects/${projectId}?${new URLSearchParams({
+              ...searchParams,
+              slideOver: "true",
+              id,
+            }).toString()}`}
+            className="text-blue-500 hover:text-blue-400 hover:underline"
+          >
+            <span className="sr-only">Edit</span>
+            <PencilIcon className="w-5 h-5 text-gray-500 hover:text-yellow-500" />
+          </Link>
+          {deleteEnabled && <DocumentRemoveButton id={id} />}
+        </div>
       </div>
       <time className="block mb-2 text-sm font-normal leading-none text-gray-400">
         {new Date(date).toLocaleString("en-US", {
@@ -60,10 +75,14 @@ export default async function Timeline({
   documents,
   projectOwnerId,
   userId,
+  searchParams,
+  projectId,
 }: {
   documents: Document[];
   projectOwnerId: string;
   userId: string;
+  searchParams: { q: string; startDate: string; endDate: string };
+  projectId: string;
 }) {
   if (!documents.length) {
     return (
@@ -86,6 +105,8 @@ export default async function Timeline({
     <ol className="relative border-l border-gray-200">
       {documents.map((document, index) => (
         <TimelineRecord
+          projectId={projectId}
+          searchParams={searchParams}
           deleteEnabled={
             projectOwnerId === userId || document.createdById === userId
           }

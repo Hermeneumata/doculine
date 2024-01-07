@@ -22,16 +22,17 @@ export interface Document {
   description: string;
   blobName: string;
   documentType: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   createdBy: User;
   timelineId: string;
   createdById: string;
 }
 
 export type NewDocument = {
+  id?: string;
   title: string;
-  date: Date | undefined;
+  date?: Date;
   description: string;
   blobName: string;
   documentType: string;

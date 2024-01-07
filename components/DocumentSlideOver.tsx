@@ -6,18 +6,19 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewDocumentForm from "@/components/NewDocumentForm";
 import createDocument from "@/lib/createDocument";
-import { NewDocument } from "@/lib/types";
+import updateDocument from "@/lib/updateDocument";
+import { NewDocument, Document } from "@/lib/types";
 import { Button } from "@tremor/react";
 import { User } from "@prisma/client";
 
 export default function SlideOver({
-  title,
+  documents,
   timelineId,
   user,
 }: {
-  title: string;
   timelineId: string;
   user: User;
+  documents: Document[];
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,6 @@ export default function SlideOver({
 
   const nullDocument: NewDocument = {
     title: "",
-    date: undefined as Date | undefined,
     description: "",
     blobName: "",
     documentType: "",
@@ -43,29 +43,26 @@ export default function SlideOver({
     },
   };
 
-  const testNullDocument: NewDocument = {
-    title: "test",
-    date: new Date(),
-    description: "test",
-    blobName: "",
-    documentType: "test",
-    createdBy: {
-      connect: {
-        id: user.id,
-      },
-    },
-    timeline: {
-      connect: {
-        id: timelineId,
-      },
-    },
-  };
-
-  const [document, setDocument] = useState<NewDocument>(testNullDocument);
+  const id = useSearchParams().get("id");
+  const [document, setDocument] = useState<NewDocument>(nullDocument);
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (id) {
+      const document = documents.find((document) => document.id === id);
+      if (document) {
+        setDocument({
+          ...document,
+          createdBy: { connect: { id: user.id } },
+          timeline: { connect: { id: timelineId } },
+        });
+        setOpen(true);
+      }
+    }
+  }, [id, documents, user.id, timelineId]);
 
   useEffect(() => {
     const slideOverOpen = searchParams.get("slideOver");
@@ -84,23 +81,30 @@ export default function SlideOver({
   const handleSave = async (newDocument: any) => {
     setLoading(true);
 
-    if (!inputFileRef.current?.files) {
-      return;
+    if (id) {
+      await updateDocument(id, {
+        title: newDocument.title,
+        description: newDocument.description,
+        date: newDocument.date,
+      });
+    } else {
+      if (!inputFileRef.current?.files) {
+        return;
+      }
+      const file = inputFileRef.current.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const {
+        body: { blobName },
+      } = await response.json();
+
+      await createDocument({ ...newDocument, blobName });
     }
-
-    const file = inputFileRef.current.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    const response = await fetch(`/api/upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const {
-      body: { blobName },
-    } = await response.json();
-
-    await createDocument({ ...newDocument, blobName });
 
     setLoading(false);
 
@@ -108,8 +112,10 @@ export default function SlideOver({
     router.refresh();
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
+    current.delete("id");
     const search = current.toString();
     const query = search ? `?${search}` : "";
+    setDocument(nullDocument);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -117,8 +123,10 @@ export default function SlideOver({
   const handleClose = () => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
+    current.delete("id");
     const search = current.toString();
     const query = search ? `?${search}` : "";
+    setDocument(nullDocument);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -155,22 +163,16 @@ export default function SlideOver({
                     className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      if (
-                        document.title &&
-                        document.date &&
-                        document.description &&
-                        document.documentType
-                      ) {
-                        handleSave({
-                          title: document.title,
-                          date: document.date.toISOString(),
-                          description: document.description,
-                          documentType: document.documentType,
-                          blobName: document.blobName,
-                          createdBy: document.createdBy,
-                          timeline: document.timeline,
-                        });
-                      }
+
+                      handleSave({
+                        title: document.title,
+                        date: document?.date?.toISOString(),
+                        description: document.description,
+                        documentType: document.documentType,
+                        blobName: document.blobName,
+                        createdBy: document.createdBy,
+                        timeline: document.timeline,
+                      });
                     }}
                   >
                     <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll overflow-x-hidden py-6">
@@ -178,7 +180,7 @@ export default function SlideOver({
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {title}
+                            {id ? "Edit Document" : "New Document"}
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -198,6 +200,7 @@ export default function SlideOver({
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         <NewDocumentForm
+                          isEdit={!!id}
                           inputFileRef={inputFileRef}
                           setFileUploaded={setFileUploaded}
                           setDocument={setDocument}
@@ -221,8 +224,8 @@ export default function SlideOver({
                           !document.title ||
                           !document.date ||
                           !document.description ||
-                          !document.documentType ||
-                          !fileUploaded
+                          (!id && !document.documentType) ||
+                          (!id && !fileUploaded)
                         }
                       >
                         Save

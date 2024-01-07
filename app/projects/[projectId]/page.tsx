@@ -91,7 +91,7 @@ export default async function Page({
   return (
     <>
       <DocumentSlideOver
-        title="Add new record"
+        documents={project.documents}
         user={user}
         timelineId={projectId}
       />
@@ -118,6 +118,8 @@ export default async function Page({
       </div>
       <Card className="mt-6">
         <Timeline
+          projectId={projectId}
+          searchParams={searchParams}
           userId={user.id}
           documents={project.documents}
           projectOwnerId={project.ownerId}
