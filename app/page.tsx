@@ -19,12 +19,6 @@ export default async function Home({
     return notFound();
   }
 
-  const documents = await prisma.document.findMany({});
-  console.info(documents);
-
-  const dbtimelines = await prisma.timeline.findMany({});
-  console.info(dbtimelines);
-
   const user = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,

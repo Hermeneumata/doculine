@@ -2,7 +2,15 @@ import {
   BlobServiceClient,
   StorageSharedKeyCredential,
   ContainerClient,
+  generateBlobSASQueryParameters,
+  BlobSASSignatureValues,
+  SASProtocol,
+  BlobSASPermissions,
 } from "@azure/storage-blob";
+
+const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+const storageAccountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
+const blobContainerName = process.env.AZURE_BLOB_CONTAINER_NAME;
 
 class AzureBlobStorage {
   private static instance: AzureBlobStorage;
@@ -10,10 +18,6 @@ class AzureBlobStorage {
   private containerClient: ContainerClient;
 
   private constructor() {
-    const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
-    const storageAccountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
-    const blobContainerName = process.env.AZURE_BLOB_CONTAINER_NAME;
-
     if (!storageAccountName || !storageAccountKey || !blobContainerName) {
       throw new Error("Azure storage configuration is missing");
     }
@@ -54,11 +58,39 @@ class AzureBlobStorage {
     try {
       const blobClient = this.containerClient.getBlockBlobClient(blobName);
       const deleteResponse = await blobClient.deleteIfExists();
+      console.info("deleteResponse: ", deleteResponse);
       return deleteResponse.succeeded;
     } catch (error) {
       console.error("Error deleting file:", error);
       throw error;
     }
+  }
+
+  public generateBlobSasUrl(blobName: string): string {
+    if (!storageAccountName || !storageAccountKey || !blobContainerName) {
+      throw new Error("Azure storage configuration is missing");
+    }
+
+    const sharedKeyCredential = new StorageSharedKeyCredential(
+      storageAccountName,
+      storageAccountKey
+    );
+
+    const sasOptions: BlobSASSignatureValues = {
+      containerName: blobContainerName,
+      blobName: blobName,
+      permissions: BlobSASPermissions.parse("r"),
+      startsOn: new Date(),
+      expiresOn: new Date(new Date().valueOf() + 30 * 1000), // 30 seconds from now
+      protocol: SASProtocol.Https,
+    };
+
+    const sasToken = generateBlobSASQueryParameters(
+      sasOptions,
+      sharedKeyCredential
+    ).toString();
+
+    return `https://${storageAccountName}.blob.core.windows.net/${blobContainerName}/${blobName}?${sasToken}`;
   }
 }
 
