@@ -20,7 +20,7 @@ export interface Document {
   title: string;
   date: Date;
   description: string;
-  downloadLink: string;
+  blobName: string;
   documentType: string;
   createdAt: Date;
   updatedAt: Date;
@@ -33,7 +33,7 @@ export type NewDocument = {
   title: string;
   date: Date | undefined;
   description: string;
-  downloadLink: string;
+  blobName: string;
   documentType: string;
   createdBy: {
     connect: {
@@ -50,7 +50,6 @@ export type NewDocument = {
 export interface Timeline {
   id: string;
   name: string;
-  resourcePath: string;
   owner: User;
   documents: Document[];
 }
@@ -58,7 +57,6 @@ export interface Timeline {
 export type NewTimeline = {
   id?: string;
   name: string;
-  resourcePath: string;
   owner: {
     connect: {
       id: string | number;

@@ -4,19 +4,18 @@ import { DocumentIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import MsgReader from "@kenjiuno/msgreader";
 import cx from "classnames";
 import { NewDocument } from "@/lib/types";
-import { useRef } from "react";
 
 export default function FileUplaod({
+  inputFileRef,
   document,
   setDocument,
-  resourcePath,
+  setFileUploaded,
 }: {
+  inputFileRef: React.RefObject<HTMLInputElement>;
   document: NewDocument;
   setDocument: (value: NewDocument) => void;
-  resourcePath: string;
+  setFileUploaded: (value: boolean) => void;
 }) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
@@ -37,8 +36,8 @@ export default function FileUplaod({
 
   const resetFileInput = () => {
     setFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (inputFileRef.current) {
+      inputFileRef.current.value = "";
     }
   };
 
@@ -63,7 +62,6 @@ export default function FileUplaod({
                 title: file.name,
                 description: msgData.subject || "",
                 documentType: fileType,
-                downloadLink: [resourcePath, file.name].join(""),
               });
             }
           } else {
@@ -72,7 +70,6 @@ export default function FileUplaod({
               description: msgData.subject || "",
               title: file.name,
               documentType: fileType,
-              downloadLink: [resourcePath, file.name].join(""),
             });
           }
         }
@@ -84,6 +81,7 @@ export default function FileUplaod({
   const fileInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
+      setFileUploaded(true);
       const file = files[0];
       const fileType = file.name.split(".").pop() || "unknown";
       setFile(file);
@@ -94,7 +92,6 @@ export default function FileUplaod({
           ...document,
           title: file.name,
           documentType: fileType,
-          downloadLink: [resourcePath, file.name].join(""),
         });
       }
     }
@@ -107,6 +104,7 @@ export default function FileUplaod({
 
     if (files && files.length > 0) {
       const file = files[0];
+      setFileUploaded(true);
       setFile(file);
       if (file.name.endsWith(".msg")) {
         handleMsgFile(file);
@@ -116,7 +114,6 @@ export default function FileUplaod({
           ...document,
           title: file.name,
           documentType: fileType,
-          downloadLink: [resourcePath, file.name].join(""),
         });
       }
     }
@@ -150,7 +147,7 @@ export default function FileUplaod({
               >
                 <span>Upload a file</span>
                 <input
-                  ref={fileInputRef}
+                  ref={inputFileRef}
                   id="file-upload"
                   name="file-upload"
                   type="file"

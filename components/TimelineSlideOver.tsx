@@ -23,7 +23,6 @@ export default function TimelineSlideOver({
 
   const nullTimeline = {
     name: "",
-    resourcePath: "",
     owner: {
       connect: {
         id: user.id,
@@ -109,7 +108,6 @@ export default function TimelineSlideOver({
                       if (timeline.name) {
                         handleSave({
                           name: timeline.name,
-                          resourcePath: timeline.resourcePath,
                           owner: timeline.owner,
                         });
                       }

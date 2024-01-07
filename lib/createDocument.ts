@@ -6,7 +6,7 @@ export interface NewDocumentDBModel {
   title: string;
   date: string;
   description: string;
-  downloadLink: string;
+  blobName: string;
   documentType: string;
 }
 

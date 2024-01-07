@@ -38,12 +38,11 @@ export default function Projects({
           <TableHeaderCell>Name</TableHeaderCell>
           <TableHeaderCell>Project Manager</TableHeaderCell>
           <TableHeaderCell>Document Count</TableHeaderCell>
-          <TableHeaderCell>Path</TableHeaderCell>
           <TableHeaderCell>Actions</TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {timelines.map(({ id, name, owner, documents, resourcePath }) => (
+        {timelines.map(({ id, name, owner, documents }) => (
           <TableRow key={id}>
             <TableCell>
               <Link
@@ -62,13 +61,6 @@ export default function Projects({
               </Link>
             </TableCell>
             <TableCell>{documents.length}</TableCell>
-            <TableCell>
-              <div className="tooltip">
-                {resourcePath.length > 20
-                  ? resourcePath.substring(0, 20) + "..."
-                  : resourcePath}
-              </div>
-            </TableCell>
             <TableCell>
               <div className="flex items-center gap-4">
                 <Link

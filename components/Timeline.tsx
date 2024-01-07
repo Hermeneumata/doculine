@@ -8,17 +8,21 @@ type TimelineRecordProps = Document & {
   deleteEnabled: boolean;
 };
 
+const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
+const containerName = process.env.AZURE_BLOB_CONTAINER_NAME!;
+
 function TimelineRecord({
   id,
   title,
   date,
   description,
-  downloadLink,
+  blobName,
   documentType,
   deleteEnabled,
   createdBy,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
+  const baseUrl = `https://${storageAccountName}.blob.core.windows.net/${containerName}`;
   return (
     <li className="mb-10 ml-6 group">
       <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
@@ -50,7 +54,7 @@ function TimelineRecord({
       </p>
       <p className="mb-4 text-base font-normal text-gray-500">{description}</p>
       <a
-        href={`file://${downloadLink}`}
+        href={`${baseUrl}/${blobName}`}
         className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700"
       >
         <svg

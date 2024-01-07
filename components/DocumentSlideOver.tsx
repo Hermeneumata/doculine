@@ -13,16 +13,15 @@ import { User } from "@prisma/client";
 export default function SlideOver({
   title,
   timelineId,
-  timelineResourcePath,
   user,
 }: {
   title: string;
   timelineId: string;
   user: User;
-  timelineResourcePath: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState<any>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +29,7 @@ export default function SlideOver({
     title: "",
     date: undefined as Date | undefined,
     description: "",
-    downloadLink: timelineResourcePath,
+    blobName: "",
     documentType: "",
     createdBy: {
       connect: {
@@ -44,7 +43,25 @@ export default function SlideOver({
     },
   };
 
-  const [document, setDocument] = useState<NewDocument>(nullDocument);
+  const testNullDocument: NewDocument = {
+    title: "test",
+    date: new Date(),
+    description: "test",
+    blobName: "",
+    documentType: "test",
+    createdBy: {
+      connect: {
+        id: user.id,
+      },
+    },
+    timeline: {
+      connect: {
+        id: timelineId,
+      },
+    },
+  };
+
+  const [document, setDocument] = useState<NewDocument>(testNullDocument);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -66,7 +83,24 @@ export default function SlideOver({
 
   const handleSave = async (newDocument: any) => {
     setLoading(true);
-    await createDocument(newDocument);
+
+    if (!inputFileRef.current?.files) {
+      return;
+    }
+
+    const file = inputFileRef.current.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch(`/api/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const {
+      body: { blobName },
+    } = await response.json();
+
+    await createDocument({ ...newDocument, blobName });
 
     setLoading(false);
 
@@ -132,7 +166,7 @@ export default function SlideOver({
                           date: document.date.toISOString(),
                           description: document.description,
                           documentType: document.documentType,
-                          downloadLink: document.downloadLink,
+                          blobName: document.blobName,
                           createdBy: document.createdBy,
                           timeline: document.timeline,
                         });
@@ -164,9 +198,10 @@ export default function SlideOver({
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         <NewDocumentForm
+                          inputFileRef={inputFileRef}
+                          setFileUploaded={setFileUploaded}
                           setDocument={setDocument}
                           document={document}
-                          resourcePath={timelineResourcePath}
                         />
                       </div>
                     </div>
@@ -186,7 +221,8 @@ export default function SlideOver({
                           !document.title ||
                           !document.date ||
                           !document.description ||
-                          !document.documentType
+                          !document.documentType ||
+                          !fileUploaded
                         }
                       >
                         Save
