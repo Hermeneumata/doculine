@@ -58,7 +58,6 @@ class AzureBlobStorage {
     try {
       const blobClient = this.containerClient.getBlockBlobClient(blobName);
       const deleteResponse = await blobClient.deleteIfExists();
-      console.info("deleteResponse: ", deleteResponse);
       return deleteResponse.succeeded;
     } catch (error) {
       console.error("Error deleting file:", error);

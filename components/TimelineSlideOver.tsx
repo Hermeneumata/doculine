@@ -6,16 +6,17 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewTimelineForm from "@/components/NewTimelineForm";
 import createTimeline from "@/lib/createTimeline";
+import updateTimeline from "@/lib/updateTimeline";
 import { Timeline, User } from "@prisma/client";
 import { Button } from "@tremor/react";
 import { NewTimeline } from "@/lib/types";
 
 export default function TimelineSlideOver({
-  title,
   user,
+  timelines,
 }: {
-  title: string;
   user: User;
+  timelines: Timeline[];
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,11 +30,31 @@ export default function TimelineSlideOver({
       },
     },
   };
+
+  const id = useSearchParams().get("id");
   const [timeline, setTimeline] = useState<NewTimeline>(nullTimeline);
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (id) {
+      const timeline = timelines.find((timeline) => timeline.id === id);
+      if (timeline) {
+        setTimeline({
+          id: timeline.id,
+          name: timeline.name,
+          owner: {
+            connect: {
+              id: user.id,
+            },
+          },
+        });
+        setOpen(true);
+      }
+    }
+  }, [id, timelines, user.id]);
 
   useEffect(() => {
     const slideOverOpen = searchParams.get("slideOver");
@@ -51,14 +72,20 @@ export default function TimelineSlideOver({
 
   const handleSave = async (newTimeline: NewTimeline) => {
     setLoading(true);
-    await createTimeline(newTimeline);
+    if (id) {
+      await updateTimeline(id, newTimeline);
+    } else {
+      await createTimeline(newTimeline);
+    }
     setLoading(false);
     setTimeline(nullTimeline);
     router.refresh();
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
+    current.delete("id");
     const search = current.toString();
     const query = search ? `?${search}` : "";
+    setTimeline(nullTimeline);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -66,9 +93,10 @@ export default function TimelineSlideOver({
   const handleClose = () => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.delete("slideOver");
-    current.delete("edit");
+    current.delete("id");
     const search = current.toString();
     const query = search ? `?${search}` : "";
+    setTimeline(nullTimeline);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -118,7 +146,7 @@ export default function TimelineSlideOver({
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {title}
+                            {id ? "Edit Project" : "New Project"}
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button

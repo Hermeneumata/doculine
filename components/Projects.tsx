@@ -70,17 +70,17 @@ export default function Projects({
                   <span className="sr-only">View</span>
                   <FolderOpenIcon className="w-5 h-5 text-gray-500 hover:text-blue-500" />
                 </Link>
-                {/* <Link
+                <Link
                   href={`/?${new URLSearchParams({
                     ...searchParams,
                     slideOver: "true",
-                    edit: id,
+                    id,
                   }).toString()}`}
                   className="text-blue-500 hover:text-blue-400 hover:underline"
                 >
                   <span className="sr-only">Edit</span>
                   <PencilIcon className="w-5 h-5 text-gray-500 hover:text-yellow-500" />
-                </Link> */}
+                </Link>
                 {owner.id === user.id && <RemoveTimelineButton id={id} />}
               </div>
             </TableCell>

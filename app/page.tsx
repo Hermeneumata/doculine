@@ -27,7 +27,8 @@ export default async function Home({
   if (!user) {
     return notFound();
   }
-  const timelines = await prisma.timeline.findMany({
+  const timelines = await prisma.timeline.findMany({});
+  const timelinesWithDocuments = await prisma.timeline.findMany({
     include: {
       owner: true,
       documents: {
@@ -40,7 +41,7 @@ export default async function Home({
 
   return (
     <>
-      <TimelineSlideOver title="Add new project" user={user} />
+      <TimelineSlideOver user={user} timelines={timelines} />
 
       <div className="flex justify-between items-center">
         <div>
@@ -59,7 +60,11 @@ export default async function Home({
         </Link>
       </div>
 
-      <Projects timelines={timelines} user={user} searchParams={searchParams} />
+      <Projects
+        timelines={timelinesWithDocuments}
+        user={user}
+        searchParams={searchParams}
+      />
     </>
   );
 }
