@@ -1,9 +1,9 @@
 "use client";
 
-import deleteDocument from "@/lib/deleteDocument";
 import RemoveButton from "@/components/RemoveButton";
+import deleteTag from "@/lib/deleteTag";
 
-export default function DocumentRemoveButton({
+export default function RemoveTimelineButton({
   id,
   children,
 }: {
@@ -13,10 +13,10 @@ export default function DocumentRemoveButton({
   return (
     <RemoveButton
       action={() => {
-        deleteDocument(id);
+        deleteTag(id);
       }}
       title="Confirm Deletion"
-      message="Are you sure you want to delete this document? This action cannot be undone."
+      message="Are you sure you want to delete this tag? Be aware that this will also remove the tag from all associated documents."
     >
       {children}
     </RemoveButton>

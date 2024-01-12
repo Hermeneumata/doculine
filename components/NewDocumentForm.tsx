@@ -1,22 +1,27 @@
 "use client";
 
 import { TextInput, DatePicker } from "@tremor/react";
-import { NewDocument } from "@/lib/types";
+import { NewDocument, Tag } from "@/lib/types";
 import FileUpload from "@/components/FileUpload";
 import Label from "@/components/Label";
 import TextArea from "@/components/TextArea";
+import TagInput from "./TagInput";
 
 export default function NewDocumentForm({
   isEdit,
   inputFileRef,
   setDocument,
   document,
+  tagsToConnectOrCreate,
+  setTagsToConnectOrCreate,
   setFileUploaded,
 }: {
   isEdit: boolean;
   inputFileRef: React.RefObject<HTMLInputElement>;
   setDocument: React.Dispatch<React.SetStateAction<NewDocument>>;
   document: NewDocument;
+  tagsToConnectOrCreate: Tag[];
+  setTagsToConnectOrCreate: React.Dispatch<React.SetStateAction<Tag[]>>;
   setFileUploaded: (value: boolean) => void;
 }) {
   return (
@@ -75,6 +80,13 @@ export default function NewDocumentForm({
             }
           />
         </div>
+      </div>
+      <div className="col-span-full">
+        <Label>Tags</Label>
+        <TagInput
+          selectedTags={tagsToConnectOrCreate}
+          setSelectedTags={setTagsToConnectOrCreate}
+        />
       </div>
     </div>
   );

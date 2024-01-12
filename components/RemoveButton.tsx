@@ -1,6 +1,5 @@
 "use client";
 
-import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   ExclamationTriangleIcon,
   XMarkIcon,
@@ -12,10 +11,12 @@ export default function RemoveButton({
   action,
   title,
   message,
+  children,
 }: {
   action: () => void;
   title: string;
   message: string;
+  children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,7 +29,7 @@ export default function RemoveButton({
     <>
       <button onClick={() => setIsOpen(true)}>
         <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
+        {children}
       </button>
 
       <Transition.Root show={isOpen} as={Fragment}>

@@ -1,13 +1,13 @@
 "use client";
 
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment, useState, useEffect, useRef, use } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import NewDocumentForm from "@/components/NewDocumentForm";
 import createDocument from "@/lib/createDocument";
 import updateDocument from "@/lib/updateDocument";
-import { NewDocument, Document } from "@/lib/types";
+import { NewDocument, Document, Tag } from "@/lib/types";
 import { Button } from "@tremor/react";
 import { User } from "@prisma/client";
 
@@ -41,10 +41,12 @@ export default function SlideOver({
         id: timelineId,
       },
     },
+    tags: [],
   };
 
   const id = useSearchParams().get("id");
   const [document, setDocument] = useState<NewDocument>(nullDocument);
+  const [tagsToConnectOrCreate, setTagsToConnectOrCreate] = useState<Tag[]>([]);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -59,6 +61,7 @@ export default function SlideOver({
           createdBy: { connect: { id: user.id } },
           timeline: { connect: { id: timelineId } },
         });
+        setTagsToConnectOrCreate(document.tags);
         setOpen(true);
       }
     }
@@ -82,10 +85,20 @@ export default function SlideOver({
     setLoading(true);
 
     if (id) {
+      const tagsToDisconnect = document.tags.filter(
+        (tag) => !tagsToConnectOrCreate.some((t) => t.id === tag.id)
+      );
       await updateDocument(id, {
         title: newDocument.title,
         description: newDocument.description,
         date: newDocument.date,
+        tags: {
+          disconnect: tagsToDisconnect.map((tag) => ({ id: tag.id })),
+          connectOrCreate: tagsToConnectOrCreate.map((tag) => ({
+            where: { id: tag.id },
+            create: tag,
+          })),
+        },
       });
     } else {
       if (!inputFileRef.current?.files) {
@@ -103,7 +116,16 @@ export default function SlideOver({
         body: { blobName },
       } = await response.json();
 
-      await createDocument({ ...newDocument, blobName });
+      await createDocument({
+        ...newDocument,
+        blobName,
+        tags: {
+          connectOrCreate: tagsToConnectOrCreate.map((tag) => ({
+            where: { id: tag.id },
+            create: tag,
+          })),
+        },
+      });
     }
 
     setLoading(false);
@@ -116,6 +138,7 @@ export default function SlideOver({
     const search = current.toString();
     const query = search ? `?${search}` : "";
     setDocument(nullDocument);
+    setTagsToConnectOrCreate([]);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -127,6 +150,7 @@ export default function SlideOver({
     const search = current.toString();
     const query = search ? `?${search}` : "";
     setDocument(nullDocument);
+    setTagsToConnectOrCreate([]);
     setOpen(false);
     router.push(`${pathname}${query}`, { scroll: false });
   };
@@ -205,6 +229,8 @@ export default function SlideOver({
                           setFileUploaded={setFileUploaded}
                           setDocument={setDocument}
                           document={document}
+                          tagsToConnectOrCreate={tagsToConnectOrCreate}
+                          setTagsToConnectOrCreate={setTagsToConnectOrCreate}
                         />
                       </div>
                     </div>

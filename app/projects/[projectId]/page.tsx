@@ -10,6 +10,8 @@ import DatePicker from "@/components/DatePicker";
 import DocumentSlideOver from "@/components/DocumentSlideOver";
 import ResetButton from "@/components/ResetButton";
 import DocumentStats from "@/components/DocumentStats";
+import TagSearch from "@/components/TagSearch";
+import getTags from "@/lib/getTags";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +20,13 @@ export default async function Page({
   searchParams,
 }: {
   params: { projectId: string };
-  searchParams: { q: string; startDate: string; endDate: string; type: string };
+  searchParams: {
+    q: string;
+    startDate: string;
+    endDate: string;
+    type: string;
+    tags: string;
+  };
 }) {
   const session = await getServerSession();
   if (!session || !session?.user || !session?.user?.email) {
@@ -36,6 +44,7 @@ export default async function Page({
 
   const { projectId } = params;
   const search = searchParams.q ?? "";
+
   const startDate =
     searchParams.startDate && !isNaN(Number(searchParams.startDate))
       ? new Date(Number(searchParams.startDate))
@@ -45,6 +54,7 @@ export default async function Page({
       ? new Date(Number(searchParams.endDate))
       : "";
   const type = searchParams.type ?? "";
+  const tags = searchParams.tags ? searchParams.tags.split(",") : [];
 
   const project = await prisma.timeline.findUnique({
     where: {
@@ -54,6 +64,7 @@ export default async function Page({
       documents: {
         include: {
           createdBy: true,
+          tags: true,
         },
         where: {
           title: {
@@ -86,6 +97,14 @@ export default async function Page({
     return notFound();
   }
 
+  project.documents = project.documents.filter((document) =>
+    tags.every((tag) =>
+      document.tags.some((documentTag) => documentTag.id === tag)
+    )
+  );
+
+  const allTags = await getTags();
+
   const isFiltered = search || startDate || endDate || type;
 
   return (
@@ -114,6 +133,7 @@ export default async function Page({
       <div className="flex flex-col md:flex-row gap-2 mt-4">
         <Search />
         <DatePicker />
+        <TagSearch tags={allTags} />
         {isFiltered && <ResetButton />}
       </div>
       <Card className="mt-6">

@@ -9,11 +9,7 @@ import TimelineSlideOver from "@/components/TimelineSlideOver";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: { q: string; startDate: string; endDate: string };
-}) {
+export default async function Home() {
   const session = await getServerSession();
   if (!session || !session?.user || !session?.user?.email) {
     return notFound();
@@ -34,6 +30,7 @@ export default async function Home({
       documents: {
         include: {
           createdBy: true,
+          tags: true,
         },
       },
     },
@@ -50,7 +47,6 @@ export default async function Home({
         </div>
         <Link
           href={`/?${new URLSearchParams({
-            ...searchParams,
             slideOver: "true",
           }).toString()}`}
           className="rounded-md items-center flex bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
@@ -60,11 +56,7 @@ export default async function Home({
         </Link>
       </div>
 
-      <Projects
-        timelines={timelinesWithDocuments}
-        user={user}
-        searchParams={searchParams}
-      />
+      <Projects timelines={timelinesWithDocuments} user={user} />
     </>
   );
 }

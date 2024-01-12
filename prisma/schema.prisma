@@ -29,16 +29,32 @@ model Timeline {
 }
 
 model Document {
-  id           String   @id @default(uuid())
+  id           String       @id @default(uuid())
   title        String
   date         DateTime
   description  String
-  blobName     String   @default("")
+  blobName     String       @default("")
   documentType String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  tags         Tag[]        @relation("TaggedIn")
+  collections  Collection[] @relation("CollectedIn")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   createdById  String
   timelineId   String
-  createdBy    User     @relation("CreatedBy", fields: [createdById], references: [id], onUpdate: NoAction)
-  timeline     Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade)
+  createdBy    User         @relation("CreatedBy", fields: [createdById], references: [id], onUpdate: NoAction)
+  timeline     Timeline     @relation(fields: [timelineId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String     @id @default(uuid())
+  name      String
+  color     String     @default("gray")
+  documents Document[] @relation("TaggedIn")
+}
+
+model Collection {
+  id        String     @id @default(uuid())
+  name      String
+  ownerId   String
+  documents Document[] @relation("CollectedIn")
 }

@@ -4,19 +4,18 @@ import { Fragment } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  ChevronDownIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
-import Image from "next/image";
 import Link from "next/link";
 
 import Logo from "@/components/Logo";
 import UserAvatar from "@/components/UserAvatar";
 
-const navigation = [{ name: "Projects", href: "/" }];
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "Projects", href: "/projects" },
+  { name: "Tags", href: "/tags" },
+];
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();

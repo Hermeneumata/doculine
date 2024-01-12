@@ -5,56 +5,54 @@ import { usePathname, useRouter } from "next/navigation";
 import { TextInput } from "@tremor/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import Spinner from "@/components/Spinner";
+import { MultiSelect, MultiSelectItem } from "@tremor/react";
+import { Tag } from "@/lib/types";
 
-export default function Search({ disabled }: { disabled?: boolean }) {
+export default function TagSearch({ tags }: { tags: Tag[] }) {
   const { replace } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [value, setValue] = useState<string[]>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const term = params.get("q");
+    const term = params.get("tags");
     if (term) {
-      setSearchTerm(term);
+      setValue(term.split(","));
     }
   }, []);
+  const handleChange = (value: string[]) => {
+    setValue(value);
 
-  function handleSearch(term: string) {
     const params = new URLSearchParams(window.location.search);
-    if (term) {
-      params.set("q", term);
+    if (value.length > 0) {
+      params.set("tags", value.join(","));
     } else {
-      params.delete("q");
+      params.delete("tags");
     }
 
     startTransition(() => {
       replace(`${pathname}?${params.toString()}`);
     });
-  }
-
+  };
   return (
     <div className="relative">
       <label htmlFor="search" className="sr-only">
         Search
       </label>
-      <TextInput
-        icon={MagnifyingGlassIcon}
-        disabled={disabled}
-        placeholder="Search by name..."
-        spellCheck={false}
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          handleSearch(e.target.value);
-        }}
-      />
-
-      {isPending && (
-        <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center -ml-1 mr-3">
-          <Spinner />
-        </div>
-      )}
+      <div className="max-w-sm mx-auto space-y-6">
+        <MultiSelect
+          value={value}
+          onValueChange={handleChange}
+          placeholder="Search by tags…"
+        >
+          {tags.map((tag) => (
+            <MultiSelectItem key={tag.id} value={tag.id}>
+              {tag.name}
+            </MultiSelectItem>
+          ))}
+        </MultiSelect>
+      </div>
     </div>
   );
 }

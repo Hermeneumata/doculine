@@ -3,12 +3,13 @@ import { getIconForDocumentType } from "@/lib/utils";
 import DocumentRemoveButton from "@/components/DocumentRemoveButton";
 import Link from "next/link";
 import DownloadDocumentButton from "./DownloadDocumentButton";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Badge } from "@tremor/react";
 
 type TimelineRecordProps = Document & {
   latest: boolean;
   deleteEnabled: boolean;
-  searchParams: { q: string; startDate: string; endDate: string };
+  searchParams: { q: string; startDate: string; endDate: string; tags: string };
   projectId: string;
 };
 
@@ -23,6 +24,7 @@ function TimelineRecord({
   createdBy,
   searchParams,
   projectId,
+  tags,
 }: TimelineRecordProps) {
   const Icon = getIconForDocumentType(documentType);
 
@@ -35,18 +37,24 @@ function TimelineRecord({
         <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
 
         <div className="flex items-center gap-2 pt-1 pl-4 transition-opacity duration-200 group-hover:opacity-100 opacity-30">
-          <Link
-            href={`/projects/${projectId}?${new URLSearchParams({
-              ...searchParams,
-              slideOver: "true",
-              id,
-            }).toString()}`}
-            className="text-blue-500 hover:text-blue-400 hover:underline"
-          >
-            <span className="sr-only">Edit</span>
-            <PencilIcon className="w-5 h-5 text-gray-500 hover:text-yellow-500" />
-          </Link>
-          {deleteEnabled && <DocumentRemoveButton id={id} />}
+          {deleteEnabled && (
+            <Link
+              href={`/projects/${projectId}?${new URLSearchParams({
+                ...searchParams,
+                slideOver: "true",
+                id,
+              }).toString()}`}
+              className="text-blue-500 hover:text-blue-400 hover:underline"
+            >
+              <span className="sr-only">Edit</span>
+              <PencilIcon className="w-5 h-5 text-gray-500 hover:text-yellow-500" />
+            </Link>
+          )}
+          {deleteEnabled && (
+            <DocumentRemoveButton id={id}>
+              <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
+            </DocumentRemoveButton>
+          )}
         </div>
       </div>
       <time className="block mb-2 text-sm font-normal leading-none text-gray-400">
@@ -56,7 +64,7 @@ function TimelineRecord({
           year: "numeric",
         })}
       </time>
-      <p className="mb-4 text-xs font-normal text-gray-500">
+      <p className="mb-2 text-xs font-normal text-gray-500">
         Added by{" "}
         <Link
           className=" text-blue-500 hover:text-blue-400 hover:underline"
@@ -65,6 +73,15 @@ function TimelineRecord({
           {createdBy.name}
         </Link>
       </p>
+      <div className="flex gap-2 flex-wrap mb-2">
+        {tags
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((tag) => (
+            <Badge size="xs" key={tag.id}>
+              <span className="text-xs">{tag.name}</span>
+            </Badge>
+          ))}
+      </div>
       <p className="mb-4 text-base font-normal text-gray-500">{description}</p>
       <DownloadDocumentButton blobName={blobName} documentType={documentType} />
     </li>
@@ -81,7 +98,7 @@ export default async function Timeline({
   documents: Document[];
   projectOwnerId: string;
   userId: string;
-  searchParams: { q: string; startDate: string; endDate: string };
+  searchParams: { q: string; startDate: string; endDate: string; tags: string };
   projectId: string;
 }) {
   if (!documents.length) {

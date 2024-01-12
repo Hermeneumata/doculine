@@ -27,6 +27,7 @@ export interface Document {
   createdBy: User;
   timelineId: string;
   createdById: string;
+  tags: Tag[];
 }
 
 export type NewDocument = {
@@ -46,6 +47,12 @@ export type NewDocument = {
       id: string;
     };
   };
+  tags: Tag[];
+};
+
+export type Tag = {
+  id: string;
+  name: string;
 };
 
 export interface Timeline {
