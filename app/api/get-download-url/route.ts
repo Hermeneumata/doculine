@@ -4,6 +4,12 @@ import Storage from "@/lib/storage";
 export async function GET(
   request: NextRequest
 ): Promise<NextResponse | Response> {
+  if (!Storage) {
+    return NextResponse.json({
+      status: 500,
+      body: "Azure storage configuration is missing",
+    });
+  }
   const { searchParams } = new URL(request.url);
   const blobName = searchParams.get("blobName");
 

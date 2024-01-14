@@ -4,6 +4,13 @@ import AzureBlobStorage from "@/lib/storage";
 export async function POST(
   request: NextRequest
 ): Promise<NextResponse | Response> {
+  if (!AzureBlobStorage) {
+    return NextResponse.json({
+      status: 500,
+      body: "Azure storage configuration is missing",
+    });
+  }
+
   const data = await request.formData();
 
   const blobName: string = data.get("blobName") as string;

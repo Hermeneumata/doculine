@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import AzureBlobStorage from "@/lib/storage";
 
 export default async function removeDocument(id: string): Promise<void> {
+  if (!AzureBlobStorage) {
+    throw new Error("Azure storage configuration is missing");
+  }
   const document = await prisma.document.findUnique({ where: { id } });
   if (!document) {
     throw new Error("Document not found");
