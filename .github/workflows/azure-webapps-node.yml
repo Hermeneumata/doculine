@@ -6,8 +6,11 @@ on:
 env:
   AZURE_WEBAPP_NAME: doculine-webapp
   AZURE_WEBAPP_PACKAGE_PATH: "."
-  NODE_VERSION: "20.x"
+  NODE_VERSION: "18.x"
   ZIP_PACKAGE_NAME: "app-release.zip"
+  AZURE_STORAGE_ACCOUNT_NAME: "stdoculinedev"
+  AZURE_BLOB_CONTAINER_NAME: "documents"
+  AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
 
 permissions:
   contents: read
@@ -68,4 +71,3 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.ZIP_PACKAGE_NAME }}
-
