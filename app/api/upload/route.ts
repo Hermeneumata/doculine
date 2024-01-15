@@ -6,12 +6,6 @@ import path from "path";
 export async function POST(
   request: NextRequest
 ): Promise<NextResponse | Response> {
-  if (!Storage) {
-    return NextResponse.json({
-      status: 500,
-      body: "Azure storage configuration is missing",
-    });
-  }
   const formData = await request.formData();
 
   const file = formData.get("file") as File;

@@ -93,9 +93,4 @@ class AzureBlobStorage {
   }
 }
 
-const azureBlobStorage =
-  storageAccountName && storageAccountKey && blobContainerName
-    ? AzureBlobStorage.getInstance()
-    : null;
-
-export default azureBlobStorage;
+export default AzureBlobStorage.getInstance();
