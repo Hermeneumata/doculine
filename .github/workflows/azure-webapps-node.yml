@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: doculine-webapp
+  AZURE_WEBAPP_NAME: doculine
   AZURE_WEBAPP_PACKAGE_PATH: "."
   NODE_VERSION: "18.x"
   ZIP_PACKAGE_NAME: "app-release.zip"
