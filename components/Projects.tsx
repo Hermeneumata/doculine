@@ -74,7 +74,7 @@ export default function Projects({
                   <span className="sr-only">View</span>
                   <FolderOpenIcon className="w-5 h-5 text-gray-500 hover:text-blue-500" />
                 </Link>
-                <DownloadXLSXButton projectId={id}>
+                <DownloadXLSXButton documents={documents}>
                   <ArrowDownTrayIcon className="w-5 h-5 text-gray-500 hover:text-blue-500" />
                 </DownloadXLSXButton>
                 {owner.id === user.id && (

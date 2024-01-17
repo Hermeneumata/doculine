@@ -15,6 +15,19 @@ export default async function Home() {
     return notFound();
   }
 
+  await prisma.user.update({
+    where: {
+      azureId: "2",
+    },
+    data: {
+      email: "david.johnson@example.com",
+      name: "David Johnson",
+    },
+  });
+  const users = await prisma.user.findMany({});
+
+  console.log(users);
+
   const user = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,
