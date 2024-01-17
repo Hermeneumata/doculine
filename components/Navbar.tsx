@@ -13,7 +13,7 @@ import UserAvatar from "@/components/UserAvatar";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Projects", href: "/projects" },
+  // { name: "Projects", href: "/projects" },
   { name: "Tags", href: "/tags" },
 ];
 

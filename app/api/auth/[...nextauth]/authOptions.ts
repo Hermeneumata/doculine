@@ -18,18 +18,26 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const testUser1 = { id: "1", name: "Test", email: "test@test.com" };
-        const testUser2 = { id: "2", name: "Test 2", email: "test2@test.com" };
+        const testUser1 = {
+          id: "1",
+          name: "Sarah Miller",
+          email: "sarah.miller@example.com",
+        };
+        const testUser2 = {
+          id: "2",
+          name: "David Johnson",
+          email: "david.johnson@example.com",
+        };
         if (
           credentials &&
-          credentials.username === "test" &&
-          credentials.password === "test"
+          credentials.username === "demo" &&
+          credentials.password === "demo"
         ) {
           return testUser1;
         } else if (
           credentials &&
-          credentials.username === "test2" &&
-          credentials.password === "test2"
+          credentials.username === "demo2" &&
+          credentials.password === "demo2"
         ) {
           return testUser2;
         } else {
