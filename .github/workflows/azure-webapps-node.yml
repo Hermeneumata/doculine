@@ -6,7 +6,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: doculine-app
   AZURE_WEBAPP_PACKAGE_PATH: "."
-  NODE_VERSION: "20.x"
+  NODE_VERSION: "18.x"
   ZIP_PACKAGE_NAME: "app-release.zip"
   AZURE_STORAGE_ACCOUNT_NAME: "storagedoculine"
   AZURE_BLOB_CONTAINER_NAME: "documents"
