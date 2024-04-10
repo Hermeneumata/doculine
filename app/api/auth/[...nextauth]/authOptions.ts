@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (account?.provider === "azure-ad") {
         let dbUser = await prisma.user.findUnique({
-          where: { azureId: user.id },
+          where: { email: user.email as string },
         });
         if (!dbUser) {
           dbUser = await prisma.user.create({

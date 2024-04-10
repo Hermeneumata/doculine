@@ -60,6 +60,7 @@ export default function NewDocumentForm({
         </label>
         <div className="mt-2">
           <DatePicker
+            enableYearNavigation
             id="date-picker"
             value={document.date}
             onValueChange={(value) => setDocument({ ...document, date: value })}

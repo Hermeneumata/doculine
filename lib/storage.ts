@@ -91,6 +91,12 @@ class AzureBlobStorage {
 
     return `https://${storageAccountName}.blob.core.windows.net/${blobContainerName}/${blobName}?${sasToken}`;
   }
+
+  public async downloadBlob(blobName: string) {
+    const blobClient = this.containerClient.getBlockBlobClient(blobName);
+    const downloadResponse = await blobClient.download();
+    return downloadResponse.readableStreamBody;
+  }
 }
 
 export default AzureBlobStorage.getInstance();

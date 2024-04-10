@@ -8,15 +8,12 @@ export default function DownloadDocumentButton({
   documentType: string;
 }) {
   const handleDownload = async (blobName: string) => {
-    const respone = await fetch(`/api/get-download-url?blobName=${blobName}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const { url } = await respone.json();
-    if (url) {
-      window.location.href = url;
+    try {
+      const url = `/api/download?fileName=${blobName}`;
+
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Error fetching the document", error);
     }
   };
   return (

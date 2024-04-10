@@ -15,6 +15,8 @@ export default async function Home() {
     return notFound();
   }
 
+  const users = await prisma.user.findMany();
+
   const user = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,

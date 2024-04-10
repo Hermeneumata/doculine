@@ -43,6 +43,7 @@ export default function DatePicker() {
   return (
     <div className="relative">
       <DateRangePicker
+        enableYearNavigation
         value={value}
         className="max-w-full mx-auto"
         onValueChange={(e) => {
