@@ -90,14 +90,15 @@ export default function TagInput({
 
           {filteredTags.length >= 0 && (
             <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {filteredTags.length === 0 && query !== "" && (
-                <button
-                  className="block px-4 py-2 text-gray-500"
-                  onClick={createTag}
-                >
-                  Create &quot;{query}&quot;
-                </button>
-              )}
+              {query.length > 2 &&
+                !filteredTags.map((tag) => tag.name).includes(query) && (
+                  <button
+                    className="block px-4 py-2 text-gray-500"
+                    onClick={createTag}
+                  >
+                    Create &quot;{query}&quot;
+                  </button>
+                )}
               {filteredTags.map((tag) => (
                 <Combobox.Option
                   key={tag.id}
