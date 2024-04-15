@@ -15,6 +15,7 @@ export default function NewDocumentForm({
   tagsToConnectOrCreate,
   setTagsToConnectOrCreate,
   setFileUploaded,
+  projectId,
 }: {
   isEdit: boolean;
   inputFileRef: React.RefObject<HTMLInputElement>;
@@ -23,6 +24,7 @@ export default function NewDocumentForm({
   tagsToConnectOrCreate: Tag[];
   setTagsToConnectOrCreate: React.Dispatch<React.SetStateAction<Tag[]>>;
   setFileUploaded: (value: boolean) => void;
+  projectId: string;
 }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -85,6 +87,7 @@ export default function NewDocumentForm({
       <div className="col-span-full">
         <Label>Tags</Label>
         <TagInput
+          projectId={projectId}
           selectedTags={tagsToConnectOrCreate}
           setSelectedTags={setTagsToConnectOrCreate}
         />

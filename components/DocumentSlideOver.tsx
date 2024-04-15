@@ -231,6 +231,7 @@ export default function SlideOver({
                           document={document}
                           tagsToConnectOrCreate={tagsToConnectOrCreate}
                           setTagsToConnectOrCreate={setTagsToConnectOrCreate}
+                          projectId={timelineId}
                         />
                       </div>
                     </div>

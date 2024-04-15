@@ -7,14 +7,16 @@ import { Badge } from "@tremor/react";
 import classNames from "classnames";
 import { Tag } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
-import getTags from "@/lib/getTags";
+import getProjectTags from "@/lib/getProjectTags";
 
 export default function TagInput({
   selectedTags,
   setSelectedTags,
+  projectId,
 }: {
   selectedTags: Tag[];
   setSelectedTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+  projectId: string;
 }) {
   const [query, setQuery] = useState("");
   const [comboboxKey, setComboboxKey] = useState(0);
@@ -22,12 +24,12 @@ export default function TagInput({
 
   useEffect(() => {
     const fetchTags = async () => {
-      const tags = await getTags();
+      const tags = await getProjectTags(projectId);
       setAllTags(tags);
     };
 
     fetchTags();
-  }, []);
+  }, [projectId]);
   const filteredTags =
     query === ""
       ? allTags.filter(

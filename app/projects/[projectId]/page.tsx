@@ -12,6 +12,8 @@ import ResetButton from "@/components/ResetButton";
 import DocumentStats from "@/components/DocumentStats";
 import TagSearch from "@/components/TagSearch";
 import getTags from "@/lib/getTags";
+import getProjectTags from "@/lib/getProjectTags";
+import DownloadZipButton from "@/components/DownloadZipButton";
 
 export const dynamic = "force-dynamic";
 
@@ -105,6 +107,8 @@ export default async function Page({
 
   const allTags = await getTags();
 
+  const projectTags = await getProjectTags(projectId);
+
   const isFiltered = search || startDate || endDate || type;
 
   return (
@@ -116,24 +120,30 @@ export default async function Page({
       />
 
       <div className="flex justify-between items-center">
-        <Title>{project.name}</Title>
-        <Link
-          href={`/projects/${projectId}?${new URLSearchParams({
-            ...searchParams,
-            slideOver: "true",
-          }).toString()}`}
-          className="rounded-md items-center flex bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          <PlusIcon className="block h-6 w-6" aria-hidden="true" />
-          New Document
-        </Link>
+        <Title className="flex-grow">{project.name}</Title>
+        <div className="flex gap-2">
+          <DownloadZipButton
+            blobNames={project.documents.map((doc) => doc.blobName)}
+            projectName={project.name}
+          />
+          <Link
+            href={`/projects/${projectId}?${new URLSearchParams({
+              ...searchParams,
+              slideOver: "true",
+            }).toString()}`}
+            className="rounded-md items-center flex bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          >
+            <PlusIcon className="block h-6 w-6" aria-hidden="true" />
+            New Document
+          </Link>
+        </div>
       </div>
 
       <DocumentStats documents={project.documents} projectId={projectId} />
       <div className="flex flex-col md:flex-row gap-2 mt-4">
         <Search />
         <DatePicker />
-        <TagSearch tags={allTags} />
+        <TagSearch tags={projectTags} />
         {isFiltered && <ResetButton />}
       </div>
       <Card className="mt-6">

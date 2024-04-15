@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Storage from "@/lib/storage";
+import mime from "mime";
 
 async function streamToBuffer(stream: any) {
   const chunks = [];
@@ -22,17 +23,15 @@ export async function GET(
     });
   }
 
-  console.info("blobName", blobName);
   try {
     const streamBody = await Storage.downloadBlob(blobName);
-
-    console.info("streamBody", streamBody);
     const fileBuffer = await streamToBuffer(streamBody);
+    const contentType = mime.getType(blobName) || "application/octet-stream";
 
     return new Response(fileBuffer, {
       status: 200,
       headers: {
-        "Content-Type": "application/pdf",
+        "Content-Type": contentType,
         "Content-Disposition": `inline; filename="${blobName}"`,
       },
     });
