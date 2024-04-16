@@ -71,7 +71,7 @@ export default function NewDocumentForm({
         </div>
       </div>
       <div className="col-span-full">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Description (max. 4000 characters)</Label>
         <div className="mt-2">
           <TextArea
             id="description"

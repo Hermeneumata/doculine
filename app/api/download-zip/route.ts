@@ -33,8 +33,6 @@ export async function GET(
 
   const filesToZip = blobNames.split(",");
 
-  console.info(filesToZip);
-
   try {
     const zip = new JSZip();
 

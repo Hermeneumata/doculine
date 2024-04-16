@@ -187,16 +187,27 @@ export default function SlideOver({
                     className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
                     onSubmit={(e) => {
                       e.preventDefault();
+                      if (document.date) {
+                        const date = new Date(document.date);
+                        const adjustedDate = new Date(
+                          Date.UTC(
+                            date.getFullYear(),
+                            date.getMonth(),
+                            date.getDate()
+                          )
+                        );
+                        const isoString = adjustedDate.toISOString();
 
-                      handleSave({
-                        title: document.title,
-                        date: document?.date?.toISOString(),
-                        description: document.description,
-                        documentType: document.documentType,
-                        blobName: document.blobName,
-                        createdBy: document.createdBy,
-                        timeline: document.timeline,
-                      });
+                        handleSave({
+                          title: document.title,
+                          date: isoString,
+                          description: document.description,
+                          documentType: document.documentType,
+                          blobName: document.blobName,
+                          createdBy: document.createdBy,
+                          timeline: document.timeline,
+                        });
+                      }
                     }}
                   >
                     <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll overflow-x-hidden py-6">
